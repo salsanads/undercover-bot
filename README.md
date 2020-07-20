@@ -19,14 +19,19 @@ source venv/bin/acvivate
 pip install -r requirements.txt
 ```
 
-4. Copy the `.env.example` file with new name `.env`
+4. Setup pre-commit hook
+```
+pre-commit install
+```
+
+5. Copy the `.env.example` file with new name `.env`
 ```
 cp .env.example .env
 ```
 
-5. Adjust the `.env` file content accordingly
+6. Adjust the `.env` file content accordingly
 
-6. Run the bot
+7. Run the bot
 ```
 python bot.py
 ```
