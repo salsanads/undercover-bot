@@ -33,5 +33,5 @@ cp .env.example .env
 
 7. Run the bot
 ```
-python bot.py
+python run.py
 ```
