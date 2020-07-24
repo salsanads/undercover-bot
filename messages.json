@@ -1,0 +1,9 @@
+{
+  "PLAYED_WORD": "Hi, your word is **{word}**",
+  "PLAYING_ORDER": "Start to describe the word by order {playing_order}",
+
+  "GUILD_ONLY_COMMAND": "You must run this command in a server",
+  "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
+  "ONGOING_GAME_EXISTS": "There's an ongoing game in this server, finish it first",
+  "PLAYING_USER_EXISTS": "{playing_users} currently playing the game on other channel"
+}
