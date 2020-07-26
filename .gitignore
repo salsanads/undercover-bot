@@ -1,4 +1,5 @@
 .env
+undercover.db
 
 .idea/
 venv/
