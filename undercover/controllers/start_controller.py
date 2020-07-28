@@ -47,10 +47,9 @@ def get_role_proportion(player_num):
 
 def get_secret_word():
     secret_word = SecretWord.get_random()
-    flipped = bool(random.getrandbits(1))
-    if flipped:
-        return secret_word.word_2, secret_word.word_1
-    return secret_word.word_1, secret_word.word_2
+    related_words = secret_word.related_words
+    random.shuffle(related_words)
+    return related_words[0], related_words[1]
 
 
 def store_playing_role(room_id, civilian_word, undercover_word, mr_white_num):

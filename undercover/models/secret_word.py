@@ -8,14 +8,19 @@ class SecretWord(Base):
     __tablename__ = "secret_words"
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    word_1 = Column(String, nullable=False)
-    word_2 = Column(String, nullable=False)
+    # temporary workaround due to unsupported ARRAY in SQLite
+    __related_words = Column("related_words", String, nullable=False)
+    related_words = []
 
-    def __init__(self, word_1, word_2):
-        self.word_1 = word_1
-        self.word_2 = word_2
+    def __init__(self, related_words):
+        self.related_words = related_words
+        self.__related_words = str(related_words)
 
     @classmethod
     @add_session
     def get_random(cls, session):
-        return session.query(cls).order_by(func.random()).first()
+        secret_word = SecretWord([])
+        while len(secret_word.related_words) < 2:
+            secret_word = session.query(cls).order_by(func.random()).first()
+            secret_word.related_words = eval(secret_word.__related_words)
+        return secret_word
