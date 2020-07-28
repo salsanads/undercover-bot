@@ -3,11 +3,11 @@ import random
 from undercover import GameState, Role, Status
 from undercover.models import PlayingRole, SecretWord
 
+from .helpers import ongoing_game_found
 
+
+@ongoing_game_found(False)
 def start(room_id, user_ids):
-    if ongoing_game_exists(room_id):
-        return GameState(Status.ONGOING_GAME_FOUND)
-
     if not player_num_valid(len(user_ids)):
         data = {"min_player": 0, "max_player": 0}  # TODO
         return GameState(Status.INVALID_PLAYER_NUMBER, data)
@@ -28,11 +28,6 @@ def start(room_id, user_ids):
     playing_order = decide_playing_order(user_ids, mr_whites)
     data = {"user_words": user_words, "playing_order": playing_order}
     return GameState(Status.PLAYING_ORDER, data)
-
-
-def ongoing_game_exists(room_id):
-    # TODO
-    pass
 
 
 def player_num_valid(player_num):
