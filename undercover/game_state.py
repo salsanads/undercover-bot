@@ -11,5 +11,5 @@ class Status(Enum):
     PLAYING_ORDER = auto()
 
     INVALID_PLAYER_NUMBER = auto()
-    ONGOING_GAME_EXISTS = auto()
-    PLAYING_USER_EXISTS = auto()
+    ONGOING_GAME_FOUND = auto()
+    PLAYING_USER_FOUND = auto()
