@@ -13,7 +13,7 @@ class Role(Enum):
 
 def start(room_id, user_ids):
     if ongoing_game_exists(room_id):
-        return GameState(Status.ONGOING_GAME_EXISTS)
+        return GameState(Status.ONGOING_GAME_FOUND)
 
     if not player_num_valid(len(user_ids)):
         data = {"min_player": 0, "max_player": 0}  # TODO
@@ -22,7 +22,7 @@ def start(room_id, user_ids):
     playing_users = get_playing_users(user_ids)
     if len(playing_users) > 0:
         data = {"playing_users": playing_users}
-        return GameState(Status.PLAYING_USER_EXISTS, data)
+        return GameState(Status.PLAYING_USER_FOUND, data)
 
     role_proportion = get_role_proportion(len(user_ids))
     civilian_num, undercover_num, mr_white_num = role_proportion
