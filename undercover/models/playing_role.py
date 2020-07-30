@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, literal
+from sqlalchemy.orm import relationship
 
 from .database import Base, add_session
 
@@ -9,6 +10,7 @@ class PlayingRole(Base):
     room_id = Column(String, primary_key=True)
     role = Column(String, primary_key=True)
     word = Column(String)
+    players = relationship("Player", backref="playing_role")
 
     def __init__(self, room_id, role, word=None):
         self.room_id = room_id

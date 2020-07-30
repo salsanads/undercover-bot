@@ -4,3 +4,4 @@ undercover.db
 .idea/
 venv/
 __pycache__/
+.vscode/
