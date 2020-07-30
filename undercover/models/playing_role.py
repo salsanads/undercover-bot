@@ -17,6 +17,6 @@ class PlayingRole(Base):
 
     @classmethod
     @add_session
-    def insert(cls, session, playing_role):
+    def insert(cls, playing_role, session):
         session.add(playing_role)
         session.commit()

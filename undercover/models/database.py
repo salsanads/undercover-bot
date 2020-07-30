@@ -1,3 +1,5 @@
+from functools import wraps
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -11,9 +13,9 @@ def init_db(engine):
 
 
 def add_session(func):
+    @wraps(func)
     def inner(*args, **kwargs):
         session = Session()
-        args.insert(1, session)
-        return func(*args, **kwargs)
+        return func(*args, session, **kwargs)
 
     return inner
