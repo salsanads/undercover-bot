@@ -1,8 +1,6 @@
 import json
 from enum import Enum, auto
 
-from discord.ext import commands
-
 messages_file = open("messages.json", "r")
 messages = json.load(messages_file)
 
@@ -18,11 +16,11 @@ def generate_message(key, params=None):
     return message
 
 
-def generate_playing_order(user_ids):
+def generate_mentions(user_ids):
     mentioned_users = []
 
     for user_id in user_ids:
-        mentioned_users.append('@<{u_id}>'.format(u_id=user_id))
-    playing_order = " ".join(mentioned_users)
+        mentioned_users.append("<@{user_id}>".format(user_id=user_id))
+    mentions = " ".join(mentioned_users)
 
-    return playing_order 
+    return mentions

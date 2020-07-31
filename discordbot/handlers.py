@@ -4,7 +4,7 @@ from discord.ext.commands import Bot, guild_only
 from quote import get_quote
 from undercover import Status, controllers
 
-from .helpers import CommandStatus, generate_message, generate_playing_order
+from .helpers import CommandStatus, generate_mentions, generate_message
 
 bot = Bot(command_prefix="!")
 
@@ -47,10 +47,17 @@ async def start(ctx):
     user_ids = {ctx.author.id}
     for user in ctx.message.mentions:
         user_ids.add(user.id)
-    game_states = controllers.start(channel_id, user_ids)
+    game_states = controllers.start(channel_id, list(user_ids))
     for game_state in game_states:
-        reply = generate_message(game_state.status.name, game_state.data)
-        await ctx.send(reply)
+        if game_state.status == Status.PLAYING_USER_FOUND:
+            await send_mentions_message(ctx, game_state, "playing_users")
+        elif game_state.status == Status.PLAYED_WORD:
+            await send_user_words_message(game_state)
+        elif game_state.status == Status.PLAYING_ORDER:
+            await send_mentions_message(ctx, game_state, "playing_order")
+        else:
+            reply = generate_message(game_state.status.name, game_state.data)
+            await ctx.send(reply)
 
 
 @bot.command(name="eliminated")
@@ -59,12 +66,7 @@ async def eliminate(ctx):
     game_states = controllers.eliminate(ctx.channel.id, ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
-            user_ids = game_state.data["playing_order"]
-            playing_order_data = generate_playing_order(user_ids)
-            reply = generate_message(
-                game_state.status.name, playing_order_data
-            )
-            await ctx.send(reply)
+            await send_mentions_message(ctx, game_state, "playing_order")
         elif game_state.status == Status.ASK_GUESSED_WORD:
             user = bot.get_user(ctx.author.id)
             reply = generate_message(game_state.status.name, game_state.data)
@@ -77,3 +79,18 @@ async def eliminate(ctx):
 async def greet(user):
     response = "Hi {mention}!".format(mention=user.mention)
     await user.send(response)
+
+
+async def send_user_words_message(game_state):
+    user_words = game_state.data
+    for user_id in user_words:
+        message = generate_message(game_state.status.name, user_words[user_id])
+        user = bot.get_user(user_id)
+        await user.send(message)
+
+
+async def send_mentions_message(ctx, game_state, user_ids_key):
+    user_ids = game_state.data[user_ids_key]
+    data = {user_ids_key: generate_mentions(user_ids)}
+    reply = generate_message(game_state.status.name, data)
+    await ctx.send(reply)
