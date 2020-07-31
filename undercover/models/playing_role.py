@@ -18,11 +18,8 @@ class PlayingRole(Base):
     @classmethod
     @add_session
     def exists(cls, room_id, session):
-        subquery = session.query(cls).filter_by(room_id=room_id)
-        exists = (
-            session.query(literal(True)).filter(subquery.exists()).scalar()
-        )
-        return exists is not None
+        room_id = session.query(cls.room_id).filter_by(room_id=room_id).first()
+        return room_id is not None
 
     @classmethod
     @add_session
