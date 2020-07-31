@@ -15,6 +15,7 @@ class GameState:
 
 class Status(Enum):
     # HAPPY PATH
+    PLAYED_WORD = auto()
     PLAYING_ORDER = auto()
     ELIMINATED_ROLE = auto()
     ASK_GUESSED_WORD = auto()

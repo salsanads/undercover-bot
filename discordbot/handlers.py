@@ -47,11 +47,8 @@ async def start(ctx):
     user_ids = {ctx.author.id}
     for user in ctx.message.mentions:
         user_ids.add(user.id)
-    game_state = controllers.start(channel_id, user_ids)
-    if game_state.status == Status.PLAYING_ORDER:
-        # TODO
-        pass
-    else:
+    game_states = controllers.start(channel_id, user_ids)
+    for game_state in game_states:
         reply = generate_message(game_state.status.name, game_state.data)
         await ctx.send(reply)
 

@@ -38,7 +38,7 @@ def player_num_valid(func):
                 "min_player": min(ROLE_PROPORTIONS),
                 "max_player": max(ROLE_PROPORTIONS),
             }
-            return GameState(Status.INVALID_PLAYER_NUMBER, data)
+            return [GameState(Status.INVALID_PLAYER_NUMBER, data)]
         return func(room_id, user_ids, *args, **kwargs)
 
     return wrapper
@@ -50,7 +50,7 @@ def start(room_id, user_ids):
     playing_users = get_playing_users(user_ids)
     if len(playing_users) > 0:
         data = {"playing_users": playing_users}
-        return GameState(Status.PLAYING_USER_FOUND, data)
+        return [GameState(Status.PLAYING_USER_FOUND, data)]
 
     role_proportion = ROLE_PROPORTIONS[len(user_ids)]
     civilian_num, undercover_num, mr_white_num = role_proportion
@@ -60,10 +60,12 @@ def start(room_id, user_ids):
     user_words, mr_whites = assign_role(
         user_ids, civilian_word, undercover_word, role_proportion
     )
+    played_word_state = GameState(Status.PLAYED_WORD, user_words)
 
     playing_order = decide_playing_order(user_ids, mr_whites)
-    data = {"user_words": user_words, "playing_order": playing_order}
-    return GameState(Status.PLAYING_ORDER, data)
+    playing_order_state = GameState(Status.PLAYING_ORDER, playing_order)
+
+    return [played_word_state, playing_order_state]
 
 
 def get_playing_users(user_ids):
