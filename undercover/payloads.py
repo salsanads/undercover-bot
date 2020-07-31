@@ -1,6 +1,12 @@
 from enum import Enum, auto
 
 
+class Role(Enum):
+    CIVILIAN = auto()
+    UNDERCOVER = auto()
+    MR_WHITE = auto()
+
+
 class GameState:
     def __init__(self, status, data=None):
         self.status = status
