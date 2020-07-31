@@ -6,6 +6,27 @@ from undercover.models import PlayingRole, SecretWord
 from .helpers import decide_playing_order, ongoing_game_found
 
 MR_WHITE_WORD = "^^"
+# player_num: (civilian_num, undercover_num, mr_white_num)
+ROLE_PROPORTIONS = {
+    3: (2, 1, 0),
+    4: (3, 1, 0),
+    5: (3, 1, 1),
+    6: (4, 1, 1),
+    7: (4, 2, 1),
+    8: (5, 2, 1),
+    9: (5, 3, 1),
+    10: (6, 3, 1),
+    11: (6, 3, 2),
+    12: (7, 3, 2),
+    13: (7, 4, 2),
+    14: (8, 4, 2),
+    15: (8, 5, 2),
+    16: (9, 5, 2),
+    17: (9, 5, 3),
+    18: (10, 5, 3),
+    19: (10, 6, 3),
+    20: (11, 6, 3),
+}
 
 
 @ongoing_game_found(False)
@@ -19,32 +40,27 @@ def start(room_id, user_ids):
         data = {"playing_users": playing_users}
         return GameState(Status.PLAYING_USER_FOUND, data)
 
-    role_proportion = get_role_proportion(len(user_ids))
+    role_proportion = ROLE_PROPORTIONS[len(user_ids)]
     civilian_num, undercover_num, mr_white_num = role_proportion
-
     civilian_word, undercover_word = get_secret_word()
+
     store_playing_role(room_id, civilian_word, undercover_word, mr_white_num)
     user_words, mr_whites = assign_role(
         user_ids, civilian_word, undercover_word, role_proportion
     )
+
     playing_order = decide_playing_order(user_ids, mr_whites)
     data = {"user_words": user_words, "playing_order": playing_order}
     return GameState(Status.PLAYING_ORDER, data)
 
 
 def player_num_valid(player_num):
-    # TODO
-    pass
+    return player_num in ROLE_PROPORTIONS
 
 
 def get_playing_users(user_ids):
     # TODO
     return []
-
-
-def get_role_proportion(player_num):
-    # TODO
-    return 0, 0, 0
 
 
 def get_secret_word():
