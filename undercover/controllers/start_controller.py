@@ -1,4 +1,5 @@
 import random
+from functools import wraps
 
 from undercover import GameState, Role, Status
 from undercover.models import PlayingRole, SecretWord
@@ -29,15 +30,23 @@ ROLE_PROPORTIONS = {
 }
 
 
-@ongoing_game_found(False)
-def start(room_id, user_ids):
-    if not player_num_valid(len(user_ids)):
-        data = {
-            "min_player": min(ROLE_PROPORTIONS),
-            "max_player": max(ROLE_PROPORTIONS),
-        }
-        return GameState(Status.INVALID_PLAYER_NUMBER, data)
+def player_num_valid(func):
+    @wraps(func)
+    def wrapper(room_id, user_ids, *args, **kwargs):
+        if len(user_ids) not in ROLE_PROPORTIONS:
+            data = {
+                "min_player": min(ROLE_PROPORTIONS),
+                "max_player": max(ROLE_PROPORTIONS),
+            }
+            return GameState(Status.INVALID_PLAYER_NUMBER, data)
+        return func(room_id, user_ids, *args, **kwargs)
 
+    return wrapper
+
+
+@ongoing_game_found(False)
+@player_num_valid
+def start(room_id, user_ids):
     playing_users = get_playing_users(user_ids)
     if len(playing_users) > 0:
         data = {"playing_users": playing_users}
@@ -55,10 +64,6 @@ def start(room_id, user_ids):
     playing_order = decide_playing_order(user_ids, mr_whites)
     data = {"user_words": user_words, "playing_order": playing_order}
     return GameState(Status.PLAYING_ORDER, data)
-
-
-def player_num_valid(player_num):
-    return player_num in ROLE_PROPORTIONS
 
 
 def get_playing_users(user_ids):
