@@ -50,3 +50,12 @@ def new_playing_order(room_id):
 def clear_game(room_id):
     Player.delete(room_id)
     PlayingRole.delete(room_id)
+
+
+def decide_playing_order(user_ids, mr_whites=None):
+    random.shuffle(user_ids)
+    if mr_whites is None:
+        return user_ids
+    while user_ids[0] in mr_whites:
+        random.shuffle(user_ids)
+    return {"playing_order": user_ids}

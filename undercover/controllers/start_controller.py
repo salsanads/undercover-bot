@@ -3,7 +3,7 @@ import random
 from undercover import GameState, Role, Status
 from undercover.models import PlayingRole, SecretWord
 
-from .helpers import ongoing_game_found
+from .helpers import decide_playing_order, ongoing_game_found
 
 
 @ongoing_game_found(False)
@@ -76,8 +76,3 @@ def assign_role(user_ids, civilian_word, undercover_word, role_proportion):
         # TODO
         pass
     return user_words, mr_whites
-
-
-def decide_playing_order(user_ids, mr_whites):
-    # TODO
-    return []
