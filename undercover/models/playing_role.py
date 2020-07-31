@@ -25,4 +25,3 @@ class PlayingRole(Base):
     @add_session
     def insert(cls, playing_role, session):
         session.add(playing_role)
-        session.commit()
