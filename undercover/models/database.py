@@ -29,8 +29,8 @@ def create_session():
 
 def add_session(func):
     @wraps(func)
-    def inner(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         with create_session() as session:
             return func(*args, session, **kwargs)
 
-    return inner
+    return wrapper
