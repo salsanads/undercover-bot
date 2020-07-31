@@ -44,14 +44,22 @@ def player_num_valid(func):
     return wrapper
 
 
+def playing_users_not_found(func):
+    @wraps(func)
+    def wrapper(room_id, user_ids, *args, **kwargs):
+        playing_users = []  # TODO query
+        if len(playing_users) > 0:
+            data = {"playing_users": playing_users}
+            return [GameState(Status.PLAYING_USER_FOUND, data)]
+        return func(room_id, user_ids, *args, **kwargs)
+
+    return wrapper
+
+
 @ongoing_game_found(False)
 @player_num_valid
+@playing_users_not_found
 def start(room_id, user_ids):
-    playing_users = get_playing_users(user_ids)
-    if len(playing_users) > 0:
-        data = {"playing_users": playing_users}
-        return [GameState(Status.PLAYING_USER_FOUND, data)]
-
     role_proportion = ROLE_PROPORTIONS[len(user_ids)]
     civilian_num, undercover_num, mr_white_num = role_proportion
     civilian_word, undercover_word = get_secret_word()
@@ -66,11 +74,6 @@ def start(room_id, user_ids):
     playing_order_state = GameState(Status.PLAYING_ORDER, playing_order)
 
     return [played_word_state, playing_order_state]
-
-
-def get_playing_users(user_ids):
-    # TODO
-    return []
 
 
 def get_secret_word():
