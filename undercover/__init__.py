@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 
-from .game_state import GameState, Status
 from .models import init_db
+from .payloads import GameState, Role, Status
 
 
 def main(db_url, env="dev"):

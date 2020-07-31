@@ -1,14 +1,7 @@
 import random
-from enum import Enum
 
-from undercover import GameState, Status
+from undercover import GameState, Role, Status
 from undercover.models import PlayingRole, SecretWord
-
-
-class Role(Enum):
-    CIVILIAN = 1
-    UNDERCOVER = 2
-    MR_WHITE = 3
 
 
 def start(room_id, user_ids):
