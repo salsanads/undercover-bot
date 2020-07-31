@@ -5,6 +5,8 @@ from undercover.models import PlayingRole, SecretWord
 
 from .helpers import decide_playing_order, ongoing_game_found
 
+MR_WHITE_WORD = "^^"
+
 
 @ongoing_game_found(False)
 def start(room_id, user_ids):
@@ -66,13 +68,15 @@ def assign_role(user_ids, civilian_word, undercover_word, role_proportion):
     random.shuffle(user_ids)
     user_words = {}
     mr_whites = set()
-    while len(user_words) < civilian_num:
-        # TODO
-        pass
-    while len(user_words) < civilian_num + undercover_num:
-        # TODO
-        pass
-    while len(user_words) < civilian_num + undercover_num + mr_white_num:
-        # TODO
-        pass
+    for user_id in user_ids:
+        if len(user_words) < civilian_num:
+            user_words[user_id] = {"word": civilian_word}
+            # TODO store
+        elif len(user_words) < civilian_num + undercover_num:
+            user_words[user_id] = {"word": undercover_word}
+            # TODO store
+        else:
+            user_words[user_id] = {"word": MR_WHITE_WORD}
+            # TODO store
+            mr_whites.add(user_id)
     return user_words, mr_whites
