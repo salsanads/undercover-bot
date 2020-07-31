@@ -54,6 +54,21 @@ async def start(ctx):
         await ctx.send(reply)
 
 
+
+@bot.command(name="eliminate")
+@guild_only()
+async def eliminate(ctx);
+    channel_id = ctx.channel.id
+    user_id = {ctx.author.id}
+    game_state = controllers.eliminate(channel_id, user_id)
+    if game_state.status == Status.ELIMINATE_ROLE:
+        # TODO
+        pass
+    else:
+        reply = generate_message(game_state.status.name, game_state.data)
+        await ctx.send(reply) 
+
+
 async def greet(user):
     response = "Hi {mention}!".format(mention=user.mention)
     await user.send(response)
