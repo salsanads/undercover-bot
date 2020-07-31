@@ -32,7 +32,10 @@ ROLE_PROPORTIONS = {
 @ongoing_game_found(False)
 def start(room_id, user_ids):
     if not player_num_valid(len(user_ids)):
-        data = {"min_player": 0, "max_player": 0}  # TODO
+        data = {
+            "min_player": min(ROLE_PROPORTIONS),
+            "max_player": max(ROLE_PROPORTIONS),
+        }
         return GameState(Status.INVALID_PLAYER_NUMBER, data)
 
     playing_users = get_playing_users(user_ids)
