@@ -31,7 +31,12 @@ cp .env.example .env
 
 6. Adjust the `.env` file content accordingly
 
-7. Run the bot
+7. Run tests
+```
+pytest
+```
+
+8. Run the bot
 ```
 python run.py
 ```
