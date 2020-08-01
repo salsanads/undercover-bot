@@ -4,6 +4,7 @@ from .database import Base, add_session
 from .playing_role import PlayingRole
 
 
+# TODO : Tambah CASCADE --> ga tau ini apa cari ya (@salsanads)
 class Player(Base):
     __tablename__ = "player"
 
