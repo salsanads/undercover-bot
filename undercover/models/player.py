@@ -1,5 +1,4 @@
 from sqlalchemy import Boolean, Column, ForeignKeyConstraint, String
-from sqlalchemy.orm import relationship
 
 from .database import Base, add_session
 from .playing_role import PlayingRole
