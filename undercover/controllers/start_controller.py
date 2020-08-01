@@ -64,7 +64,10 @@ def start(room_id, user_ids):
     num_civilians, num_undercovers, num_mr_whites = role_proportion
     civilian_word, undercover_word = get_secret_word()
 
-    store_playing_role(room_id, civilian_word, undercover_word, num_mr_whites)
+    mr_white_exists = num_mr_whites > 0
+    store_playing_roles(
+        room_id, civilian_word, undercover_word, mr_white_exists
+    )
     user_words, mr_whites = assign_role(
         user_ids, civilian_word, undercover_word, role_proportion
     )
@@ -83,12 +86,14 @@ def get_secret_word():
     return related_words[0], related_words[1]
 
 
-def store_playing_role(room_id, civilian_word, undercover_word, num_mr_whites):
+def store_playing_roles(
+    room_id, civilian_word, undercover_word, mr_white_exists
+):
     PlayingRole.insert(PlayingRole(room_id, Role.CIVILIAN.name, civilian_word))
     PlayingRole.insert(
         PlayingRole(room_id, Role.UNDERCOVER.name, undercover_word)
     )
-    if num_mr_whites > 0:
+    if mr_white_exists:
         PlayingRole.insert(PlayingRole(room_id, Role.MR_WHITE.name))
 
 
