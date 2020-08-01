@@ -20,3 +20,10 @@ class Status(Enum):
     ONGOING_GAME_FOUND = auto()
     ONGOING_GAME_NOT_FOUND = auto()
     PLAYING_USER_FOUND = auto()
+
+    ELIMINATED_PLAYER_NOT_FOUND = auto()
+    ELIMINATED_PLAYER_DEAD = auto()
+    ELIMINATED_ROLE = auto()
+    ASK_GUESSED_WORD = auto()
+    CIVILIAN_WIN = auto()
+    NON_CIVILIAN_WIN = auto()

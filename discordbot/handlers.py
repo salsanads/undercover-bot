@@ -54,6 +54,17 @@ async def start(ctx):
         await ctx.send(reply)
 
 
+@bot.command(name="killme")
+@guild_only()
+async def killme(ctx):
+    # channel_id = ctx.channel.id
+    # user_id = ctx.author.id
+    # # game_state = controllers.killme(channel_id, user_id)
+
+    # TODO
+    pass
+
+
 async def greet(user):
     response = "Hi {mention}!".format(mention=user.mention)
     await user.send(response)
