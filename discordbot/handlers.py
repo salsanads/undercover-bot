@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from discord.ext.commands import Bot, guild_only
 
@@ -7,6 +8,7 @@ from undercover import Status, controllers
 from .helpers import CommandStatus, generate_message, generate_playing_order
 
 bot = Bot(command_prefix="!")
+client = discord.Client()
 
 
 @bot.event
@@ -58,7 +60,7 @@ async def start(ctx):
 
 @bot.command(name="eliminate")
 @guild_only()
-async def eliminate(ctx);
+async def eliminate(ctx):
     channel_id = ctx.channel.id
     user_id = {ctx.author.id}
     game_states = controllers.eliminate(channel_id, user_id)
@@ -68,6 +70,10 @@ async def eliminate(ctx);
             playing_order_data = generate_playing_order(user_ids)
             reply = generate_message(game_state.status.name, playing_order_data)
             await ctx.send(reply)
+        elif game_state.status == Status.ASK_GUESSED_WORLD:
+            user = client.get_user(user_id)
+            reply = generate_message(game_state.status.name, game_state.data)
+            await user.send(reply)
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply) 
