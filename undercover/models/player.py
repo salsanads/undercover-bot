@@ -23,4 +23,3 @@ class Player(Base):
     @add_session
     def insert(cls, player, session):
         session.add(player)
-        session.commit()
