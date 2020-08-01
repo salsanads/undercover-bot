@@ -18,6 +18,8 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
         await ctx.send(generate_message(CommandStatus.GUILD_ONLY_COMMAND.name))
+    else:
+        raise error
 
 
 @bot.command(name="dm")
@@ -52,7 +54,6 @@ async def start(ctx):
     else:
         reply = generate_message(game_state.status.name, game_state.data)
         await ctx.send(reply)
-
 
 
 @bot.command(name="eliminate")

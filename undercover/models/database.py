@@ -1,9 +1,11 @@
+from contextlib import contextmanager
 from functools import wraps
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-Session = scoped_session(sessionmaker())
+Session = sessionmaker()
 Base = declarative_base()
 
 
@@ -12,10 +14,23 @@ def init_db(engine):
     Session.configure(bind=engine)
 
 
+@contextmanager
+def create_session():
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except SQLAlchemyError:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
 def add_session(func):
     @wraps(func)
-    def inner(*args, **kwargs):
-        session = Session()
-        return func(*args, session, **kwargs)
+    def wrapper(*args, **kwargs):
+        with create_session() as session:
+            return func(*args, session, **kwargs)
 
-    return inner
+    return wrapper
