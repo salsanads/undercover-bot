@@ -10,7 +10,7 @@ class Player(Base):
     user_id = Column(String, primary_key=True)
     alive = Column(Boolean, nullable=False)
     guessing = Column(Boolean, nullable=False)
-    room_id = Column(String, primary_key=True)
+    room_id = Column(String, nullable=False)
     role = Column(String, nullable=False)
     __table_args__ = (
         ForeignKeyConstraint(
