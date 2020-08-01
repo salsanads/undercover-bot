@@ -20,6 +20,13 @@ class Player(Base):
         {},
     )
 
+    def __init__(self, user_id, room_id, role, alive=True, guessing=False):
+        self.user_id = user_id
+        self.alive = alive
+        self.guessing = guessing
+        self.room_id = room_id
+        self.role = role
+
     @classmethod
     @add_session
     def insert(cls, player, session):
