@@ -7,7 +7,7 @@ from undercover.models import PlayingRole, SecretWord
 from .helpers import decide_playing_order, ongoing_game_found
 
 MR_WHITE_WORD = "^^"
-# player_num: (civilian_num, undercover_num, mr_white_num)
+# num_players: (num_civilians, num_undercovers, num_mr_whites)
 ROLE_PROPORTIONS = {
     3: (2, 1, 0),
     4: (3, 1, 0),
@@ -30,7 +30,7 @@ ROLE_PROPORTIONS = {
 }
 
 
-def player_num_valid(func):
+def num_players_valid(func):
     @wraps(func)
     def wrapper(room_id, user_ids, *args, **kwargs):
         if len(user_ids) not in ROLE_PROPORTIONS:
@@ -57,14 +57,14 @@ def playing_users_not_found(func):
 
 
 @ongoing_game_found(False)
-@player_num_valid
+@num_players_valid
 @playing_users_not_found
 def start(room_id, user_ids):
     role_proportion = ROLE_PROPORTIONS[len(user_ids)]
-    civilian_num, undercover_num, mr_white_num = role_proportion
+    num_civilians, num_undercovers, num_mr_whites = role_proportion
     civilian_word, undercover_word = get_secret_word()
 
-    store_playing_role(room_id, civilian_word, undercover_word, mr_white_num)
+    store_playing_role(room_id, civilian_word, undercover_word, num_mr_whites)
     user_words, mr_whites = assign_role(
         user_ids, civilian_word, undercover_word, role_proportion
     )
@@ -83,25 +83,25 @@ def get_secret_word():
     return related_words[0], related_words[1]
 
 
-def store_playing_role(room_id, civilian_word, undercover_word, mr_white_num):
+def store_playing_role(room_id, civilian_word, undercover_word, num_mr_whites):
     PlayingRole.insert(PlayingRole(room_id, Role.CIVILIAN.name, civilian_word))
     PlayingRole.insert(
         PlayingRole(room_id, Role.UNDERCOVER.name, undercover_word)
     )
-    if mr_white_num > 0:
+    if num_mr_whites > 0:
         PlayingRole.insert(PlayingRole(room_id, Role.MR_WHITE.name))
 
 
 def assign_role(user_ids, civilian_word, undercover_word, role_proportion):
-    civilian_num, undercover_num, mr_white_num = role_proportion
+    num_civilians, num_undercovers, num_mr_whites = role_proportion
     random.shuffle(user_ids)
     user_words = {}
     mr_whites = set()
     for user_id in user_ids:
-        if len(user_words) < civilian_num:
+        if len(user_words) < num_civilians:
             user_words[user_id] = {"word": civilian_word}
             # TODO store
-        elif len(user_words) < civilian_num + undercover_num:
+        elif len(user_words) < num_civilians + num_undercovers:
             user_words[user_id] = {"word": undercover_word}
             # TODO store
         else:
