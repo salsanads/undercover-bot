@@ -4,13 +4,6 @@
 
   "GUILD_ONLY_COMMAND": "You must run this command in a server",
   "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
-  "USER_NOT_PLAYING": "You are not playing the game",
-  "ONGOING_GAME_NOT_EXISTS": "There’s no ongoing game in this server",
-  "INVALID_ELIMINATED_PLAYER": "You cannot eliminate {player}",
-  "NON_CIVILIAN_WIN": "Undercovers and Mr. Whites win",
-  "CIVILIAN_WIN": "Civilians win",
-  "ELIMINATED_ROLE": "{eliminated_player} with {role} has been eliminated",
-  "ASK_GUESSED_WORD": "Hi Mr. White, please guess the word using !guess command"
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
   "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel"
 }
