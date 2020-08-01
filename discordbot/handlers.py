@@ -4,7 +4,7 @@ from discord.ext.commands import Bot, guild_only
 from quote import get_quote
 from undercover import Status, controllers
 
-from .helpers import CommandStatus, generate_message, geenerate_playing_order
+from .helpers import CommandStatus, generate_message, generate_playing_order
 
 bot = Bot(command_prefix="!")
 
