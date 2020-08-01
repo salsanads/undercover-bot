@@ -68,7 +68,9 @@ async def eliminate(ctx):
         if game_state.status == Status.PLAYING_ORDER:
             user_ids = game_state.data["playing_order"]
             playing_order_data = generate_playing_order(user_ids)
-            reply = generate_message(game_state.status.name, playing_order_data)
+            reply = generate_message(
+                game_state.status.name, playing_order_data
+            )
             await ctx.send(reply)
         elif game_state.status == Status.ASK_GUESSED_WORLD:
             user = client.get_user(user_id)
@@ -76,7 +78,7 @@ async def eliminate(ctx):
             await user.send(reply)
         else:
             reply = generate_message(game_state.status.name, game_state.data)
-            await ctx.send(reply) 
+            await ctx.send(reply)
 
 
 async def greet(user):
