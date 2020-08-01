@@ -21,6 +21,6 @@ class Player(Base):
 
     @classmethod
     @add_session
-    def insert(cls, session, player):
+    def insert(cls, player, session):
         session.add(player)
         session.commit()
