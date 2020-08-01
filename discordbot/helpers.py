@@ -16,3 +16,13 @@ def generate_message(key, params=None):
     if params is not None:
         message = message.format(**params)
     return message
+
+
+def generate_playing_order(user_ids):
+    mentioned_users = []
+
+    for user_id in user_ids:
+        mentioned_users.append('@<{u_id}>'.format(u_id=user_id))
+    playing_order = " ".join(mentioned_users)
+
+    return playing_order 
