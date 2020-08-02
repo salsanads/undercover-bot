@@ -27,3 +27,8 @@ class PlayingRole(Base):
     @add_session
     def insert(cls, playing_role, session):
         session.add(playing_role)
+
+    @classmethod
+    @add_session
+    def delete(cls, room_id, session):
+        session.query(cls).filter_by(room_id=room_id).delete()

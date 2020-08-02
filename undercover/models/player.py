@@ -1,5 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKeyConstraint, String
 
+from undercover.payloads import Role
+
 from .database import Base, add_session
 from .playing_role import PlayingRole
 
@@ -31,3 +33,53 @@ class Player(Base):
     @add_session
     def insert(cls, player, session):
         session.add(player)
+
+    @classmethod
+    @add_session(expire_on_commit=False)
+    def get(cls, user_id, session):
+        return session.query(cls).filter_by(user_id=user_id).first()
+
+    @classmethod
+    @add_session
+    def kill(cls, user_id, session):
+        player = session.query(cls).filter_by(user_id=user_id).first()
+        player.alive = False
+        if player.role == Role.MR_WHITE.name:
+            player.guessing = True
+
+    @classmethod
+    @add_session
+    def delete(cls, room_id, session):
+        session.query(cls).filter_by(room_id=room_id).delete()
+
+    @classmethod
+    @add_session
+    def num_alive_players(cls, room_id, session, role="ALL"):
+        if role != "ALL":
+            return (
+                session.query(cls)
+                .filter_by(room_id=room_id, alive=True, role=role)
+                .count()
+            )
+
+        return (
+            session.query(cls).filter_by(room_id=room_id, alive=True).count()
+        )
+
+    @classmethod
+    @add_session
+    def alive_player_ids(cls, room_id, session, role="ALL"):
+        if role != "ALL":
+            player_with_role_ids = (
+                session.query(cls.user_id)
+                .filter_by(room_id=room_id, alive=True, role=role)
+                .all()
+            )
+            return [id for id, in player_with_role_ids]
+
+        player_ids = (
+            session.query(cls.user_id)
+            .filter_by(room_id=room_id, alive=True)
+            .all()
+        )
+        return [id for id, in player_ids]
