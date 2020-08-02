@@ -187,3 +187,11 @@ class TestPlayer:
         user_id = "1"
         with pytest.raises(Exception):
             Player.kill(user_id)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "user_id, expected_result", [("1", True), ("2", False)]
+    )
+    def test_exists(user_id, expected_result):
+        Player.insert(Player("1", "1", Role.CIVILIAN.name))
+        assert Player.exists(user_id) is expected_result
