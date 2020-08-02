@@ -35,6 +35,12 @@ class Player(Base):
         session.add(player)
 
     @classmethod
+    @add_session
+    def exists(cls, user_id, session):
+        exists = session.query(cls.user_id).filter_by(user_id=user_id).first()
+        return exists is not None
+
+    @classmethod
     @add_session(expire_on_commit=False)
     def get(cls, user_id, session):
         return session.query(cls).filter_by(user_id=user_id).first()
