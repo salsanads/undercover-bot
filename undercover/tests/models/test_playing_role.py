@@ -61,3 +61,8 @@ class TestPlayingRole:
         role = Role.MR_WHITE.name
         with pytest.raises(Exception):
             PlayingRole.insert(PlayingRole(room_id, role))
+
+    @staticmethod
+    def test_delete(session):
+        PlayingRole.delete("1")
+        assert session.query(PlayingRole).first() is None
