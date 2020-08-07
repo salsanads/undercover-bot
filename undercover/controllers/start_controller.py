@@ -2,7 +2,7 @@ import random
 from functools import wraps
 
 from undercover import GameState, Role, Status
-from undercover.models import PlayingRole, SecretWord
+from undercover.models import Player, PlayingRole, SecretWord
 
 from .helpers import decide_playing_order, ongoing_game_found
 
@@ -69,7 +69,7 @@ def start(room_id, user_ids):
         room_id, civilian_word, undercover_word, mr_white_exists
     )
     user_words, mr_whites = assign_role(
-        user_ids, civilian_word, undercover_word, role_proportion
+        room_id, user_ids, civilian_word, undercover_word, role_proportion
     )
     played_word_state = GameState(Status.PLAYED_WORD, user_words)
 
@@ -97,7 +97,9 @@ def store_playing_roles(
         PlayingRole.insert(PlayingRole(room_id, Role.MR_WHITE.name))
 
 
-def assign_role(user_ids, civilian_word, undercover_word, role_proportion):
+def assign_role(
+    room_id, user_ids, civilian_word, undercover_word, role_proportion
+):
     num_civilians, num_undercovers, num_mr_whites = role_proportion
     random.shuffle(user_ids)
     user_words = {}
@@ -105,12 +107,12 @@ def assign_role(user_ids, civilian_word, undercover_word, role_proportion):
     for user_id in user_ids:
         if len(user_words) < num_civilians:
             user_words[user_id] = {"word": civilian_word}
-            # TODO store
+            Player.insert(Player(user_id, room_id, Role.CIVILIAN.name))
         elif len(user_words) < num_civilians + num_undercovers:
             user_words[user_id] = {"word": undercover_word}
-            # TODO store
+            Player.insert(Player(user_id, room_id, Role.UNDERCOVER.name))
         else:
             user_words[user_id] = {"word": MR_WHITE_WORD}
-            # TODO store
+            Player.insert(Player(user_id, room_id, Role.MR_WHITE.name))
             mr_whites.add(user_id)
     return user_words, mr_whites
