@@ -27,3 +27,13 @@ class PlayingRole(Base):
     @add_session
     def insert(cls, playing_role, session):
         session.add(playing_role)
+
+    @classmethod
+    @add_session
+    def get_word(cls, room_id, role, session):
+        word = (
+            session.query(cls.word)
+            .filter_by(room_id=room_id, role=role.name)
+            .first()
+        )
+        return word
