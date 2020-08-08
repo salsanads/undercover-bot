@@ -46,6 +46,10 @@ async def start(ctx):
     channel_id = ctx.channel.id
     user_ids = {ctx.author.id}
     for user in ctx.message.mentions:
+        if user.bot:
+            reply = generate_message(CommandStatus.HUMAN_ONLY_COMMAND.name)
+            await ctx.send(reply)
+            return
         user_ids.add(user.id)
     game_states = controllers.start(channel_id, list(user_ids))
     for game_state in game_states:
