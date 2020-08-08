@@ -47,7 +47,7 @@ def num_players_valid(func):
 def playing_users_not_found(func):
     @wraps(func)
     def wrapper(room_id, user_ids, *args, **kwargs):
-        playing_users = []  # TODO query
+        playing_users = Player.filter_exists(user_ids)
         if len(playing_users) > 0:
             data = {"playing_users": playing_users}
             return [GameState(Status.PLAYING_USER_FOUND, data)]

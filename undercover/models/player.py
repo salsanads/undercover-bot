@@ -6,7 +6,7 @@ from .database import Base, add_session
 from .playing_role import PlayingRole
 
 
-# TODO : Tambah CASCADE --> ga tau ini apa cari ya (@salsanads)
+# TODO: add CASCADE
 class Player(Base):
     __tablename__ = "player"
 
@@ -38,6 +38,14 @@ class Player(Base):
     @add_session(expire_on_commit=False)
     def get(cls, user_id, session):
         return session.query(cls).filter_by(user_id=user_id).first()
+
+    @classmethod
+    @add_session
+    def filter_exists(cls, user_ids, session):
+        existing_user_ids = (
+            session.query(cls.user_id).filter(cls.user_id.in_(user_ids)).all()
+        )
+        return [user_id for user_id, in existing_user_ids]
 
     @classmethod
     @add_session(expire_on_commit=False)
