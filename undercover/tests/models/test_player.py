@@ -1,7 +1,7 @@
 import pytest
 
+from undercover import Role
 from undercover.models.player import Player, PlayingRole
-from undercover.payloads import Role
 
 
 class TestPlayer:
