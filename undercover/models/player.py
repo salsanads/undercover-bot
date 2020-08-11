@@ -54,8 +54,8 @@ class Player(Base):
 
     @classmethod
     @add_session
-    def num_alive_players(cls, room_id, session, role="ALL"):
-        if role != "ALL":
+    def num_alive_players(cls, room_id, session, role=None):
+        if role is not None:
             return (
                 session.query(cls)
                 .filter_by(room_id=room_id, alive=True, role=role)
@@ -68,8 +68,8 @@ class Player(Base):
 
     @classmethod
     @add_session
-    def alive_player_ids(cls, room_id, session, role="ALL"):
-        if role != "ALL":
+    def alive_player_ids(cls, room_id, session, role=None):
+        if role is not None:
             player_with_role_ids = (
                 session.query(cls.user_id)
                 .filter_by(room_id=room_id, alive=True, role=role)
