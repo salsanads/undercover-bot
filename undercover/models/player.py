@@ -75,11 +75,11 @@ class Player(Base):
                 .filter_by(room_id=room_id, alive=True, role=role)
                 .all()
             )
-            return [id for id, in player_with_role_ids]
+            return [user_id for user_id, in player_with_role_ids]
 
         player_ids = (
             session.query(cls.user_id)
             .filter_by(room_id=room_id, alive=True)
             .all()
         )
-        return [id for id, in player_ids]
+        return [user_id for user_id, in player_ids]
