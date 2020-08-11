@@ -21,43 +21,24 @@ def ongoing_game_found(should_be_found):
     return inner
 
 
-def get_elimination_result(player, return_eliminated_role=False):
-    states = []
-    if player.alive:
-        return states
-
-    room_id = player.room_id
-    n_alive_players = Player.num_alive_players(room_id)
+def evaluate_game(room_id):
     n_alive_civilians = Player.num_alive_players(
         room_id, role=Role.CIVILIAN.name
     )
 
-    if return_eliminated_role:
-        data = {"player": player.user_id, "role": player.role}
-        states.append(GameState(Status.ELIMINATED_ROLE, data))
+    if n_alive_civilians == 1:
+        clear_game(room_id)
+        return [GameState(Status.NON_CIVILIAN_WIN)]
 
-    if (
-        return_eliminated_role
-        and player.role == Role.MR_WHITE.name
-        and player.guessing
-    ):
-        states.append(GameState(Status.ASK_GUESSED_WORD))
-        return states
+    n_alive_players = Player.num_alive_players(room_id)
 
     if n_alive_civilians == n_alive_players:
         clear_game(room_id)
-        states.append(GameState(Status.CIVILIAN_WIN))
-        return states
-
-    if n_alive_civilians == 1:
-        clear_game(room_id)
-        states.append(GameState(Status.NON_CIVILIAN_WIN))
-        return states
+        return [GameState(Status.CIVILIAN_WIN)]
 
     playing_order = new_playing_order(room_id)
     data = {"playing_order": playing_order}
-    states.append(GameState(Status.PLAYING_ORDER, data))
-    return states
+    return [GameState(Status.PLAYING_ORDER, data)]
 
 
 def new_playing_order(room_id):
