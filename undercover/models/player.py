@@ -40,12 +40,13 @@ class Player(Base):
         return session.query(cls).filter_by(user_id=user_id).first()
 
     @classmethod
-    @add_session
+    @add_session(expire_on_commit=False)
     def kill(cls, user_id, session):
         player = session.query(cls).filter_by(user_id=user_id).first()
         player.alive = False
         if player.role == Role.MR_WHITE.name:
             player.guessing = True
+        return player
 
     @classmethod
     @add_session

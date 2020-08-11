@@ -165,9 +165,8 @@ class TestPlayer:
         room_id = "1"
         player = Player(user_id, room_id, role)
         Player.insert(player)
-        Player.kill(user_id)
 
-        killed_player = Player.get(user_id)
+        killed_player = Player.kill(user_id)
         assert not killed_player.alive
         assert killed_player.guessing is expected_guessing
 
