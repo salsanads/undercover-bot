@@ -64,5 +64,9 @@ class TestPlayingRole:
 
     @staticmethod
     def test_delete(session):
-        PlayingRole.delete("1")
-        assert session.query(PlayingRole).first() is None
+        room_id = "1"
+        PlayingRole.delete(room_id)
+        assert (
+            session.query(PlayingRole).filter_by(room_id=room_id).first()
+            is None
+        )

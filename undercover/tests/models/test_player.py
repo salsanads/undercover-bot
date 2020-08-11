@@ -21,11 +21,7 @@ class TestPlayer:
     def test_insert_player(session):
         playing_role = PlayingRole("1", Role.CIVILIAN.name, "civilian_word")
         civilian = Player(
-            user_id="1",
-            alive=True,
-            guessing=False,
-            room_id=playing_role.room_id,
-            role=playing_role.role,
+            user_id="1", room_id=playing_role.room_id, role=playing_role.role,
         )
         Player.insert(civilian)
         players = session.query(Player).filter_by(user_id="1").all()
@@ -40,22 +36,12 @@ class TestPlayer:
         assert player.playing_role.word == playing_role.word
 
     @staticmethod
-    def test_insert_duplicate_player(session):
-        civilian = Player(
-            user_id="1",
-            alive=True,
-            guessing=False,
-            room_id="1",
-            role=Role.CIVILIAN.name,
-        )
+    def test_insert_duplicate_player():
+        civilian = Player(user_id="1", room_id="1", role=Role.CIVILIAN.name,)
         Player.insert(civilian)
         with pytest.raises(Exception):
             undercover = Player(
-                user_id="1",
-                alive=True,
-                guessing=False,
-                room_id="2",
-                role=Role.UNDERCOVER.name,
+                user_id="1", room_id="2", role=Role.UNDERCOVER.name,
             )
             Player.insert(undercover)
 
@@ -85,7 +71,7 @@ class TestPlayer:
         assert should_not_none is not None
 
     @staticmethod
-    def test_num_alive_players(session):
+    def test_num_alive_players():
         room_id = "1"
         user_ids = ["1", "2", "3", "4"]
         status = [True, True, False, True]
@@ -118,7 +104,7 @@ class TestPlayer:
         assert n_alive_mr_white == 0
 
     @staticmethod
-    def test_alive_player_ids(session):
+    def test_alive_player_ids():
         room_id = "1"
         user_ids = ["1", "2", "3", "4"]
         status = [True, True, False, True]
@@ -161,9 +147,12 @@ class TestPlayer:
         assert player.user_id == user_id
         assert player.room_id == room_id
         assert player.role == Role.CIVILIAN.name
+        assert player.alive
+        assert not player.guessing
 
     @staticmethod
     def test_get_non_existing_player():
+        # no players added previously in `populate_db()`
         user_id = "1"
         assert Player.get(user_id) is None
 
@@ -184,6 +173,7 @@ class TestPlayer:
 
     @staticmethod
     def test_kill_non_existing_player():
+        # no players added previously in `populate_db()`
         user_id = "1"
         with pytest.raises(Exception):
             Player.kill(user_id)
