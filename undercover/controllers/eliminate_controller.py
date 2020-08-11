@@ -16,7 +16,7 @@ def elimination_valid(func):
             return [GameState(Status.ELIMINATED_PLAYER_NOT_FOUND, data)]
 
         if not player.alive:
-            return [GameState(Status.ELIMINATED_PLAYER_ALREADY_SLAIN, data)]
+            return [GameState(Status.ELIMINATED_PLAYER_ALREADY_KILLED, data)]
 
         return func(room_id, user_id, *args, **kwargs)
 
