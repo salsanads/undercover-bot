@@ -37,3 +37,8 @@ class PlayingRole(Base):
             .first()
         )
         return word
+   
+    @classmethod
+    @add_session
+    def delete(cls, room_id, session):
+        session.query(cls).filter_by(room_id=room_id).delete()

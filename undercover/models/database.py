@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from functools import wraps
+from functools import partial, wraps
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,10 +27,15 @@ def create_session():
         session.close()
 
 
-def add_session(func):
+def add_session(func=None, expire_on_commit=True):
+    if func is None:
+        return partial(add_session, expire_on_commit=expire_on_commit)
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         with create_session() as session:
+            if not expire_on_commit:
+                session.expire_on_commit = False
             return func(*args, session, **kwargs)
 
     return wrapper
