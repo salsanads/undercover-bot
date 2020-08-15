@@ -57,7 +57,7 @@ async def start(ctx):
         await ctx.send(reply)
 
 
-@bot.command(name="eliminate")
+@bot.command(name="eliminated")
 @guild_only()
 async def eliminate(ctx):
     channel_id = ctx.channel.id
