@@ -59,9 +59,7 @@ async def start(ctx):
 @bot.command(name="eliminated")
 @guild_only()
 async def eliminate(ctx):
-    channel_id = ctx.channel.id
-    user_id = {ctx.author.id}
-    game_states = controllers.eliminate(channel_id, user_id)
+    game_states = controllers.eliminate(ctx.channel.id, ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             user_ids = game_state.data["playing_order"]
@@ -71,7 +69,7 @@ async def eliminate(ctx):
             )
             await ctx.send(reply)
         elif game_state.status == Status.ASK_GUESSED_WORD:
-            user = bot.get_user(user_id)
+            user = bot.get_user(ctx.author.id)
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
         else:
