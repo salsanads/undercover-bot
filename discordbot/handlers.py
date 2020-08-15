@@ -77,12 +77,12 @@ async def eliminate(ctx):
             await ctx.send(reply)
 
 
-@bot.command(name="eliminate")
+@bot.command(name="guess")
 @dm_only()
 async def guess(ctx):
-    channel_id = ctx.channel.id
+    # channel_id = ctx.channel.id
     user_id = {ctx.author.id}
-    game_states = controllers.eliminate(channel_id, user_id)
+    game_states = controllers.guess(user_id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             user_ids = game_state.data["playing_order"]
