@@ -23,14 +23,23 @@ def elimination_valid(func):
     return wrapper
 
 
+def kill_player(user_id):
+    player = Player.get(user_id)
+    updated_attrs = {"alive": False}
+    if player.role == Role.MR_WHITE.name:
+        updated_attrs["guessing"] = True
+    Player.update(user_id, **updated_attrs)
+
+
 @ongoing_game_found(True)
 @elimination_valid
 def eliminate(room_id, user_id):
-    player = Player.kill(user_id)
-    data = {"player": player.user_id, "role": player.role}
+    kill_player(user_id)
+    killed_player = Player.get(user_id)
+    data = {"player": killed_player.user_id, "role": killed_player.role}
     eliminated_role = GameState(Status.ELIMINATED_ROLE, data)
 
-    if player.role == Role.MR_WHITE.name:
+    if killed_player.role == Role.MR_WHITE.name:
         game_state = GameState(Status.ASK_GUESSED_WORD)
         return [eliminated_role, game_state]
     else:

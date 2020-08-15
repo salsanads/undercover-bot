@@ -48,13 +48,14 @@ class Player(Base):
         return [user_id for user_id, in existing_user_ids]
 
     @classmethod
-    @add_session(expire_on_commit=False)
-    def kill(cls, user_id, session):
-        player = session.query(cls).filter_by(user_id=user_id).first()
-        player.alive = False
-        if player.role == Role.MR_WHITE.name:
-            player.guessing = True
-        return player
+    @add_session
+    def update(cls, user_id, session, **kwargs):
+        player = session.query(cls).get(user_id)
+        if player is None:
+            raise Exception(f"No player with user_id {user_id} is found")
+        for column, updated_value in kwargs.items():
+            if hasattr(player, column):
+                setattr(player, column, updated_value)
 
     @classmethod
     @add_session

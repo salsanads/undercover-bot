@@ -1,5 +1,6 @@
 import pytest
 
+from undercover.controllers.eliminate_controller import kill_player
 from undercover.controllers.helpers import evaluate_game
 from undercover.models import Player, PlayingRole
 from undercover.payloads import GameState, Role, Status
@@ -36,7 +37,7 @@ class TestEvaluateGame:
     def test_evaluate_game(killed_user_ids, expected_status, session):
         room_id = "1"
         for user_id in killed_user_ids:
-            Player.kill(user_id)
+            kill_player(user_id)
 
         game_state = evaluate_game(room_id)[0]
 

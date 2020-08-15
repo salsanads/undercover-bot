@@ -1,11 +1,11 @@
 import pytest
 
-from undercover.controllers.eliminate_controller import eliminate
+from undercover.controllers.eliminate_controller import eliminate, kill_player
 from undercover.models import Player, PlayingRole
 from undercover.payloads import GameState, Role, Status
 
 
-class TestEliminate:
+class TestEliminateController:
     @staticmethod
     @pytest.fixture(autouse=True)
     def populate_db():
@@ -26,21 +26,39 @@ class TestEliminate:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "killed_user_ids, eliminated_user_id, eliminated_role, expected_status",
+        "user_id, expected_guessing", [("1", False), ("4", True)],
+    )
+    def test_kill_player(user_id, expected_guessing):
+        kill_player(user_id)
+        killed_player = Player.get(user_id)
+        assert not killed_player.alive
+        assert killed_player.guessing is expected_guessing
+
+    @staticmethod
+    def test_kill_player_with_non_existing_player():
+        non_existing_user_id = "5"
+        with pytest.raises(Exception):
+            kill_player(non_existing_user_id)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "already_killed_user_ids, eliminated_user_id, eliminated_role, expected_status",
         [
-            ([None], "1", Role.CIVILIAN.name, Status.NON_CIVILIAN_WIN),
-            ([None], "3", Role.UNDERCOVER.name, Status.PLAYING_ORDER),
-            ([None], "4", Role.MR_WHITE.name, Status.ASK_GUESSED_WORD),
+            ([], "1", Role.CIVILIAN.name, Status.NON_CIVILIAN_WIN),
+            ([], "3", Role.UNDERCOVER.name, Status.PLAYING_ORDER),
+            ([], "4", Role.MR_WHITE.name, Status.ASK_GUESSED_WORD),
             (["4"], "3", Role.UNDERCOVER.name, Status.CIVILIAN_WIN),
         ],
     )
     def test_eliminate_valid_scenario(
-        killed_user_ids, eliminated_user_id, eliminated_role, expected_status
+        already_killed_user_ids,
+        eliminated_user_id,
+        eliminated_role,
+        expected_status,
     ):
         room_id = "1"
-        for user_id in killed_user_ids:
-            if user_id is not None:
-                Player.kill(user_id)
+        for user_id in already_killed_user_ids:
+            kill_player(user_id)
 
         game_states = eliminate(room_id, eliminated_user_id)
         assert len(game_states) == 2
@@ -68,7 +86,7 @@ class TestEliminate:
     def test_eliminate_invalid_scenario(room_id, user_id, expected_status):
         PlayingRole.insert(PlayingRole("2", Role.MR_WHITE.name))
         Player.insert(Player("5", "2", Role.MR_WHITE.name))
-        Player.kill("2")
+        kill_player("2")
 
         game_states = eliminate(room_id, user_id)
         assert len(game_states) == 1
