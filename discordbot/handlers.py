@@ -8,7 +8,6 @@ from undercover import Status, controllers
 from .helpers import CommandStatus, generate_message, generate_playing_order
 
 bot = Bot(command_prefix="!")
-client = discord.Client()
 
 
 @bot.event
@@ -72,8 +71,8 @@ async def eliminate(ctx):
                 game_state.status.name, playing_order_data
             )
             await ctx.send(reply)
-        elif game_state.status == Status.ASK_GUESSED_WORLD:
-            user = client.get_user(user_id)
+        elif game_state.status == Status.ASK_GUESSED_WORD:
+            user = bot.get_user(user_id)
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
         else:
