@@ -28,16 +28,15 @@ class TestEvaluateGame:
     @pytest.mark.parametrize(
         "killed_user_ids, expected_status",
         [
-            ([None, "1"], Status.NON_CIVILIAN_WIN),
-            ([None, "3"], Status.PLAYING_ORDER),
+            (["1"], Status.NON_CIVILIAN_WIN),
+            (["3"], Status.PLAYING_ORDER),
             (["4", "3"], Status.CIVILIAN_WIN),
         ],
     )
     def test_evaluate_game(killed_user_ids, expected_status, session):
         room_id = "1"
         for user_id in killed_user_ids:
-            if user_id is not None:
-                Player.kill(user_id)
+            Player.kill(user_id)
 
         game_state = evaluate_game(room_id)[0]
 
