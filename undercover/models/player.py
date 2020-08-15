@@ -84,3 +84,10 @@ class Player(Base):
             .all()
         )
         return [user_id for user_id, in player_ids]
+
+    @classmethod
+    @add_session
+    def update_guessing(cls, user_id, guessing_status, session):
+        session.query(cls).filter_by(user_id=user_id).update(
+            {"guessing": guessing_status}
+        )
