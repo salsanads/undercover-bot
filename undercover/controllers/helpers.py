@@ -36,20 +36,9 @@ def evaluate_game(room_id):
         clear_game(room_id)
         return [GameState(Status.CIVILIAN_WIN)]
 
-    playing_order = new_playing_order(room_id)
-    data = {"playing_order": playing_order}
-    return [GameState(Status.PLAYING_ORDER, data)]
-
-
-def new_playing_order(room_id):
     alive_player_ids = Player.alive_player_ids(room_id)
-    random.shuffle(alive_player_ids)
-    return alive_player_ids
-
-
-def clear_game(room_id):
-    Player.delete(room_id)
-    PlayingRole.delete(room_id)
+    playing_order = decide_playing_order(alive_player_ids)
+    return [GameState(Status.PLAYING_ORDER, playing_order)]
 
 
 def decide_playing_order(user_ids, mr_whites=None):
@@ -59,3 +48,8 @@ def decide_playing_order(user_ids, mr_whites=None):
     while user_ids[0] in mr_whites:
         random.shuffle(user_ids)
     return {"playing_order": user_ids}
+
+
+def clear_game(room_id):
+    Player.delete(room_id)
+    PlayingRole.delete(room_id)
