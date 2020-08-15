@@ -11,7 +11,7 @@ python -m venv venv
 
 2. Activate the virtual environment
 ```
-source venv/bin/acvivate
+source venv/bin/activate
 ```
 
 3. Install the dependencies
