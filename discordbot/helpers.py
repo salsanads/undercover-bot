@@ -7,7 +7,7 @@ messages = json.load(messages_file)
 
 class CommandStatus(Enum):
     GUILD_ONLY_COMMAND = auto()
-    HUMAN_ONLY_COMMAND = auto()
+    HUMAN_PLAYER_ONLY = auto()
 
 
 def generate_message(key, params=None):

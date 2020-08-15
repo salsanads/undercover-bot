@@ -4,6 +4,7 @@ from discord.ext.commands import Bot, guild_only
 from quote import get_quote
 from undercover import Status, controllers
 
+from .errors import BotPlayerFound
 from .helpers import CommandStatus, generate_mentions, generate_message
 
 bot = Bot(command_prefix="!")
@@ -18,6 +19,13 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
         await ctx.send(generate_message(CommandStatus.GUILD_ONLY_COMMAND.name))
+
+    elif isinstance(error, commands.errors.CommandInvokeError):
+        if isinstance(error.original, BotPlayerFound):
+            await ctx.send(
+                generate_message(CommandStatus.HUMAN_PLAYER_ONLY.name)
+            )
+
     else:
         raise error
 
@@ -44,14 +52,8 @@ async def quote(ctx):
 @guild_only()
 async def start(ctx):
     channel_id = ctx.channel.id
-    user_ids = {ctx.author.id}
-    for user in ctx.message.mentions:
-        if user.bot:
-            reply = generate_message(CommandStatus.HUMAN_ONLY_COMMAND.name)
-            await ctx.send(reply)
-            return
-        user_ids.add(user.id)
-    game_states = controllers.start(channel_id, list(user_ids))
+    user_ids = retrieve_player_ids(ctx)
+    game_states = controllers.start(channel_id, user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
             await send_mentions_message(ctx, game_state, "playing_users")
@@ -83,6 +85,15 @@ async def eliminate(ctx):
 async def greet(user):
     response = "Hi {mention}!".format(mention=user.mention)
     await user.send(response)
+
+
+def retrieve_player_ids(ctx):
+    user_ids = {ctx.author.id}
+    for user in ctx.message.mentions:
+        if user.bot:
+            raise BotPlayerFound
+        user_ids.add(user.id)
+    return list(user_ids)
 
 
 async def send_user_words_message(game_state):

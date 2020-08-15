@@ -7,7 +7,7 @@
   "NON_CIVILIAN_WIN": "There's no more Civilians, Undercovers and Mr.White win",
 
   "GUILD_ONLY_COMMAND": "You must run this command in a server",
-  "HUMAN_ONLY_COMMAND": "Only humans can play the game :(",
+  "HUMAN_PLAYER_ONLY": "Only humans can play the game :(",
   "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
   "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel",
