@@ -43,9 +43,7 @@ def evaluate_game(room_id):
 
 def decide_playing_order(user_ids, mr_whites=None):
     random.shuffle(user_ids)
-    if mr_whites is None:
-        return user_ids
-    while user_ids[0] in mr_whites:
+    while mr_whites is not None and user_ids[0] in mr_whites:
         random.shuffle(user_ids)
     return {"playing_order": user_ids}
 
