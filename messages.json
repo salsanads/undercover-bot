@@ -1,10 +1,15 @@
 {
   "PLAYED_WORD": "Hi, your word is **{word}**",
   "PLAYING_ORDER": "Start to describe the word by order {playing_order}",
+  "ELIMINATED_ROLE": "{player} with role: {role} has been eliminated",
+  "ASK_GUESSED_WORD": "Hi Mr. White, please guess the word using `!guess` command",
+  "CIVILIAN_WIN": "All intruders have been eliminated, Civilians win",
+  "NON_CIVILIAN_WIN": "There's no more Civilians, Undercovers and Mr.White win",
 
   "GUILD_ONLY_COMMAND": "You must run this command in a server",
   "DM_ONLY_COMMAND": "You can only run this command from private message",
   "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
-  "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel"
+  "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel",
+  "ONGOING_GAME_NOT_FOUND": "There's no ongoing game in this server"
 }
