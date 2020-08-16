@@ -28,17 +28,17 @@ def evaluate_game(room_id):
 
     if n_alive_civilians == 1:
         clear_game(room_id)
-        return [GameState(Status.NON_CIVILIAN_WIN)]
+        return GameState(Status.NON_CIVILIAN_WIN, room_id=room_id)
 
     n_alive_players = Player.num_alive_players(room_id)
 
     if n_alive_civilians == n_alive_players:
         clear_game(room_id)
-        return [GameState(Status.CIVILIAN_WIN)]
+        return GameState(Status.CIVILIAN_WIN, room_id=room_id)
 
     alive_player_ids = Player.alive_player_ids(room_id)
     playing_order = decide_playing_order(alive_player_ids)
-    return [GameState(Status.PLAYING_ORDER, playing_order)]
+    return GameState(Status.PLAYING_ORDER, playing_order, room_id=room_id)
 
 
 def decide_playing_order(user_ids, mr_whites=None):

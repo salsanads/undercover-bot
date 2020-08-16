@@ -30,5 +30,15 @@ class PlayingRole(Base):
 
     @classmethod
     @add_session
+    def get_word(cls, room_id, role, session):
+        word = (
+            session.query(cls.word)
+            .filter_by(room_id=room_id, role=role.name)
+            .first()
+        )
+        return word
+   
+    @classmethod
+    @add_session
     def delete(cls, room_id, session):
         session.query(cls).filter_by(room_id=room_id).delete()

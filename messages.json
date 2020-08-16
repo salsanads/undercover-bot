@@ -2,9 +2,10 @@
   "PLAYED_WORD": "Hi, your word is **{word}**",
   "PLAYING_ORDER": "Start to describe the word by order {playing_order}",
   "ELIMINATED_ROLE": "{player} with role: {role} has been eliminated",
+  "ELIMINATED_MR_WHITE": "{player} with role: {role} has been eliminated, waiting for Mr. White to guess...",
   "ASK_GUESSED_WORD": "Hi Mr. White, please guess the word using `!guess` command",
   "CIVILIAN_WIN": "All intruders have been eliminated, Civilians win",
-  "NON_CIVILIAN_WIN": "There's no more Civilians, Undercovers and Mr.White win",
+  "NON_CIVILIAN_WIN": "There's only one Civilian left, Undercovers and Mr.White win",
   "MR_WHITE_WIN": "There's no difficulty guessing the word, Mr.White win",
 
   "GUILD_ONLY_COMMAND": "You must run this command in a server",
@@ -14,5 +15,7 @@
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
   "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel",
   "ONGOING_GAME_NOT_FOUND": "There's no ongoing game in this server",
+  "ELIMINATED_PLAYER_NOT_FOUND": "Elimination failed because {player} is not playing in this channel",
+  "ELIMINATED_PLAYER_ALREADY_KILLED": "Elimination failed because {player} has been eliminated before",
   "NOT_IN_GUESSING_TURN": "It's not yet the time for guessing"
 }
