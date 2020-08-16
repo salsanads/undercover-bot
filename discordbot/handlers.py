@@ -88,7 +88,7 @@ async def guess(ctx):
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             user_ids = game_state.data["playing_order"]
-            channel = bot.get_channel(int(game_state.data["room_id"]))
+            channel = bot.get_channel(int(game_state.room_id))
             playing_order_data = generate_playing_order(user_ids)
             reply = generate_message(
                 game_state.status.name, playing_order_data
@@ -98,7 +98,7 @@ async def guess(ctx):
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
         else:
-            channel = bot.get_channel(int(game_state.data["room_id"]))
+            channel = bot.get_channel(int(game_state.room_id))
             reply = generate_message(game_state.status.name, game_state.data)
             await channel.send(reply)
 
