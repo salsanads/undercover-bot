@@ -1,7 +1,7 @@
 # Undercover Bot
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 
-A bot (hopefully) for playing Undercover in Discord.
+A bot for playing Undercover in Discord.
 
 ## Development Guide
 1. Create a virtual environment
