@@ -21,9 +21,11 @@ class Status(Enum):
     ASK_GUESSED_WORD = auto()
     CIVILIAN_WIN = auto()
     NON_CIVILIAN_WIN = auto()
+    MR_WHITE_WIN = auto()
 
     # UNHAPPY PATH
     INVALID_PLAYER_NUMBER = auto()
     ONGOING_GAME_FOUND = auto()
     PLAYING_USER_FOUND = auto()
     ONGOING_GAME_NOT_FOUND = auto()
+    NOT_IN_GUESSING_TURN = auto()

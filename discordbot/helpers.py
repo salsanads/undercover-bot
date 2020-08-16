@@ -6,6 +6,7 @@ messages = json.load(messages_file)
 
 
 class CommandStatus(Enum):
+    DM_ONLY_COMMAND = auto()
     GUILD_ONLY_COMMAND = auto()
     HUMAN_PLAYER_ONLY = auto()
 

@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
 from discord.ext import commands
-from discord.ext.commands import Bot, guild_only
+from discord.ext.commands import Bot, dm_only, guild_only
 
 from quote import get_quote
 from undercover import Status, controllers
@@ -21,13 +21,13 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
         await ctx.send(generate_message(CommandStatus.GUILD_ONLY_COMMAND.name))
-
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
             await ctx.send(
                 generate_message(CommandStatus.HUMAN_PLAYER_ONLY.name)
             )
-
+    elif isinstance(error, commands.errors.PrivateMessageOnly):
+        await ctx.send(generate_message(CommandStatus.DM_ONLY_COMMAND.name))
     else:
         raise error
 
@@ -82,6 +82,25 @@ async def eliminate(ctx):
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
+
+
+@bot.command(name="guess")
+@dm_only()
+async def guess(ctx):
+    user_id = ctx.message.author.id
+    word = str(ctx.message.content).strip()
+    game_states = controllers.guess_word(user_id, word)
+    for game_state in game_states:
+        if game_state.status == Status.PLAYING_ORDER:
+            channel = bot.get_channel(int(game_state.room_id))
+            await send_mention_message(channel, game_state, "playing_order")
+        elif game_state.status == Status.NOT_IN_GUESSING_TURN:
+            reply = generate_message(game_state.status.name, game_state.data)
+            await ctx.send(reply)
+        else:
+            channel = bot.get_channel(int(game_state.room_id))
+            reply = generate_message(game_state.status.name, game_state.data)
+            await channel.send(reply)
 
 
 async def greet(user):
