@@ -3,6 +3,7 @@ from discord.ext.commands import Bot, dm_only, guild_only
 
 from quote import get_quote
 from undercover import Status, controllers
+from undercover.controllers.helpers import clear_game
 
 from .errors import BotPlayerFound
 from .helpers import CommandStatus, generate_mention, generate_message
@@ -117,6 +118,13 @@ async def guess(ctx):
             channel = bot.get_channel(int(game_state.room_id))
             reply = generate_message(game_state.status.name, game_state.data)
             await channel.send(reply)
+
+
+@bot.command(name="clear")
+@guild_only()
+async def clear(ctx):
+    clear_game(ctx.channel.id)
+    await ctx.send("The game has been cleared")
 
 
 async def greet(user):
