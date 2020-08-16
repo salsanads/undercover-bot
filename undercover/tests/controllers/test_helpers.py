@@ -39,7 +39,7 @@ class TestEvaluateGame:
         for user_id in killed_user_ids:
             kill_player(user_id)
 
-        game_state = evaluate_game(room_id)[0]
+        game_state = evaluate_game(room_id)
 
         assert game_state.status is expected_status
         if game_state.status is not Status.PLAYING_ORDER:

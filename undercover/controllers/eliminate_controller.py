@@ -43,5 +43,5 @@ def eliminate(room_id, user_id):
         game_state = GameState(Status.ASK_GUESSED_WORD)
         return [eliminated_role, game_state]
     else:
-        game_state = evaluate_game(room_id)[0]
+        game_state = evaluate_game(room_id)
         return [eliminated_role, game_state]

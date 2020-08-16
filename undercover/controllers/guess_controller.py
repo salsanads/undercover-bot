@@ -15,4 +15,4 @@ def guess_word(user_id, word):
         return [GameState(Status.MR_WHITE_WIN, room_id=player.room_id)]
 
     Player.update(user_id, guessing=False)
-    return evaluate_game(player.room_id)
+    return [evaluate_game(player.room_id)]
