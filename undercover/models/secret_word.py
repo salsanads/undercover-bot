@@ -13,8 +13,8 @@ class SecretWord(Base):
     related_words = []
 
     def __init__(self, related_words):
-        self.related_words = related_words
         self.__related_words = str(related_words)
+        self.related_words = related_words
 
     @classmethod
     @add_session
