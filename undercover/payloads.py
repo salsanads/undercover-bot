@@ -8,9 +8,10 @@ class Role(Enum):
 
 
 class GameState:
-    def __init__(self, status, data=None):
+    def __init__(self, status, data=None, room_id=None):
         self.status = status
         self.data = data
+        self.room_id = room_id
 
 
 class Status(Enum):
