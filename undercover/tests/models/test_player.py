@@ -157,22 +157,32 @@ class TestPlayer:
         assert Player.get(user_id) is None
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "user_id, role, expected_guessing",
-        [("1", Role.CIVILIAN.name, False), ("2", Role.MR_WHITE.name, True)],
-    )
-    def test_kill(user_id, role, expected_guessing):
-        room_id = "1"
-        player = Player(user_id, room_id, role)
+    def test_update():
+        user_id = "1"
+        player = Player(user_id=user_id, room_id="1", role=Role.CIVILIAN.name)
         Player.insert(player)
 
-        killed_player = Player.kill(user_id)
-        assert not killed_player.alive
-        assert killed_player.guessing is expected_guessing
+        updated_room_id = "2"
+        updated_role = Role.MR_WHITE.name
+        updated_alive = False
+        updated_guessing = True
+        updated_attrs = {
+            "room_id": updated_room_id,
+            "role": updated_role,
+            "alive": updated_alive,
+            "guessing": updated_guessing,
+        }
+        Player.update(user_id, **updated_attrs)
+
+        updated_player = Player.get(user_id)
+        assert updated_player.room_id == updated_room_id
+        assert updated_player.role == updated_role
+        assert not updated_player.alive
+        assert updated_player.guessing
 
     @staticmethod
-    def test_kill_non_existing_player():
+    def test_update_non_existing_player():
         # no players added previously in `populate_db()`
         user_id = "1"
         with pytest.raises(Exception):
-            Player.kill(user_id)
+            Player.update(user_id, alive=False)

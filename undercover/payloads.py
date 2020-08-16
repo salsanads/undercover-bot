@@ -29,4 +29,6 @@ class Status(Enum):
     ONGOING_GAME_FOUND = auto()
     PLAYING_USER_FOUND = auto()
     ONGOING_GAME_NOT_FOUND = auto()
+    ELIMINATED_PLAYER_NOT_FOUND = auto()
+    ELIMINATED_PLAYER_ALREADY_KILLED = auto()
     NOT_IN_GUESSING_TURN = auto()
