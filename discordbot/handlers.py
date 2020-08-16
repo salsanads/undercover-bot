@@ -21,7 +21,6 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
         await ctx.send(generate_message(CommandStatus.GUILD_ONLY_COMMAND.name))
-
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
             await ctx.send(
