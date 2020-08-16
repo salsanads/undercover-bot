@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from discord.ext import commands
 from discord.ext.commands import Bot, guild_only
 
@@ -5,7 +7,7 @@ from quote import get_quote
 from undercover import Status, controllers
 
 from .errors import BotPlayerFound
-from .helpers import CommandStatus, generate_mentions, generate_message
+from .helpers import CommandStatus, generate_mention, generate_message
 
 bot = Bot(command_prefix="!")
 
@@ -56,11 +58,11 @@ async def start(ctx):
     game_states = controllers.start(channel_id, user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
-            await send_mentions_message(ctx, game_state, "playing_users")
+            await send_mention_message(ctx, game_state, "playing_users")
         elif game_state.status == Status.PLAYED_WORD:
             await send_user_words_message(game_state)
         elif game_state.status == Status.PLAYING_ORDER:
-            await send_mentions_message(ctx, game_state, "playing_order")
+            await send_mention_message(ctx, game_state, "playing_order")
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
@@ -72,7 +74,7 @@ async def eliminate(ctx):
     game_states = controllers.eliminate(ctx.channel.id, ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
-            await send_mentions_message(ctx, game_state, "playing_order")
+            await send_mention_message(ctx, game_state, "playing_order")
         elif game_state.status == Status.ASK_GUESSED_WORD:
             user = bot.get_user(ctx.author.id)
             reply = generate_message(game_state.status.name, game_state.data)
@@ -104,8 +106,12 @@ async def send_user_words_message(game_state):
         await user.send(message)
 
 
-async def send_mentions_message(ctx, game_state, user_ids_key):
-    user_ids = game_state.data[user_ids_key]
-    data = {user_ids_key: generate_mentions(user_ids)}
-    reply = generate_message(game_state.status.name, data)
-    await ctx.send(reply)
+async def send_mention_message(recipient, game_state, user_id_key):
+    if isinstance(game_state.data[user_id_key], Iterable):
+        mention = generate_mention(user_ids=game_state.data[user_id_key])
+    else:
+        mention = generate_mention(user_id=game_state.data[user_id_key])
+
+    data = {user_id_key: mention}
+    message = generate_message(game_state.status.name, data)
+    await recipient.send(message)

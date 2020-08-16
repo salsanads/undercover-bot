@@ -17,11 +17,17 @@ def generate_message(key, params=None):
     return message
 
 
-def generate_mentions(user_ids):
+def generate_mention(user_id=None, user_ids=None):
+    if user_id is None and user_ids is None:
+        raise ValueError("Cannot have both user_id and user_ids None")
+    elif user_id is not None and user_ids is not None:
+        raise ValueError("Cannot have both user_id and user_ids not None")
+
+    if user_id is not None:
+        return "<@{user_id}>".format(user_id=user_id)
+
     mentioned_users = []
-
     for user_id in user_ids:
-        mentioned_users.append("<@{user_id}>".format(user_id=user_id))
-    mentions = " ".join(mentioned_users)
-
-    return mentions
+        mentioned_users.append(generate_mention(user_id=user_id))
+    mention = " ".join(mentioned_users)
+    return mention
