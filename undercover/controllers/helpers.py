@@ -11,9 +11,9 @@ def ongoing_game_found(should_be_found):
         def wrapper(room_id, *args, **kwargs):
             actual_found = PlayingRole.exists(room_id)
             if not should_be_found and actual_found:
-                return GameState(Status.ONGOING_GAME_FOUND)
+                return [GameState(Status.ONGOING_GAME_FOUND)]
             elif should_be_found and not actual_found:
-                return GameState(Status.ONGOING_GAME_NOT_FOUND)
+                return [GameState(Status.ONGOING_GAME_NOT_FOUND)]
             return func(room_id, *args, **kwargs)
 
         return wrapper
@@ -36,15 +36,16 @@ def evaluate_game(room_id):
         clear_game(room_id)
         return [GameState(Status.CIVILIAN_WIN)]
 
-    playing_order = new_playing_order(room_id)
-    data = {"playing_order": playing_order}
-    return [GameState(Status.PLAYING_ORDER, data)]
-
-
-def new_playing_order(room_id):
     alive_player_ids = Player.alive_player_ids(room_id)
-    random.shuffle(alive_player_ids)
-    return alive_player_ids
+    playing_order = decide_playing_order(alive_player_ids)
+    return [GameState(Status.PLAYING_ORDER, playing_order)]
+
+
+def decide_playing_order(user_ids, mr_whites=None):
+    random.shuffle(user_ids)
+    while mr_whites is not None and user_ids[0] in mr_whites:
+        random.shuffle(user_ids)
+    return {"playing_order": user_ids}
 
 
 def clear_game(room_id):

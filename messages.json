@@ -9,6 +9,7 @@
 
   "GUILD_ONLY_COMMAND": "You must run this command in a server",
   "DM_ONLY_COMMAND": "You can only run this command from private message",
+  "HUMAN_PLAYER_ONLY": "Sorry, bots are not allowed to join the game",
   "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
   "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel",
