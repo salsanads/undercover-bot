@@ -10,7 +10,7 @@ def guess_word(user_id, word):
         return [GameState(Status.NOT_IN_GUESSING_TURN)]
 
     civilian_word = PlayingRole.get_word(player.room_id, Role.CIVILIAN)
-    if word.lower() == civilian_word.lower():
+    if word.lower() == civilian_word.word.lower():
         clear_game(player.room_id)
         return [GameState(Status.MR_WHITE_WIN, room_id=player.room_id)]
 

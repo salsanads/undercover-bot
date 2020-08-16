@@ -19,6 +19,7 @@ class Status(Enum):
     PLAYED_WORD = auto()
     PLAYING_ORDER = auto()
     ELIMINATED_ROLE = auto()
+    ELIMINATED_MR_WHITE = auto()
     ASK_GUESSED_WORD = auto()
     CIVILIAN_WIN = auto()
     NON_CIVILIAN_WIN = auto()

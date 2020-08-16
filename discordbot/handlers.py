@@ -1,5 +1,3 @@
-from collections.abc import Iterable
-
 from discord.ext import commands
 from discord.ext.commands import Bot, dm_only, guild_only
 
@@ -55,7 +53,7 @@ async def quote(ctx):
 async def start(ctx):
     channel_id = ctx.channel.id
     user_ids = retrieve_player_ids(ctx)
-    game_states = controllers.start(channel_id, user_ids)
+    game_states = controllers.start(str(channel_id), user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
             await send_mention_message(ctx, game_state, "playing_users")
@@ -71,7 +69,9 @@ async def start(ctx):
 @bot.command(name="eliminated")
 @guild_only()
 async def eliminate(ctx):
-    game_states = controllers.eliminate(ctx.channel.id, ctx.author.id)
+    game_states = controllers.eliminate(
+        str(ctx.channel.id), str(ctx.author.id)
+    )
     user = bot.get_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
@@ -80,6 +80,7 @@ async def eliminate(ctx):
             game_state.status == Status.ELIMINATED_PLAYER_NOT_FOUND
             or game_state.status == Status.ELIMINATED_PLAYER_ALREADY_KILLED
             or game_state.status == Status.ELIMINATED_ROLE
+            or game_state.status == Status.ELIMINATED_MR_WHITE
         ):
             await send_mention_message(ctx, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:
@@ -94,8 +95,8 @@ async def eliminate(ctx):
 @dm_only()
 async def guess(ctx):
     user_id = ctx.message.author.id
-    word = str(ctx.message.content).strip()
-    game_states = controllers.guess_word(user_id, word)
+    word = " ".join(ctx.message.content.split(" ")[1:])
+    game_states = controllers.guess_word(str(user_id), word)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             channel = bot.get_channel(int(game_state.room_id))
@@ -115,11 +116,11 @@ async def greet(user):
 
 
 def retrieve_player_ids(ctx):
-    user_ids = {ctx.author.id}
+    user_ids = {str(ctx.author.id)}
     for user in ctx.message.mentions:
         if user.bot:
             raise BotPlayerFound
-        user_ids.add(user.id)
+        user_ids.add(str(user.id))
     return list(user_ids)
 
 
@@ -127,12 +128,12 @@ async def send_user_words_message(game_state):
     user_words = game_state.data
     for user_id in user_words:
         message = generate_message(game_state.status.name, user_words[user_id])
-        user = bot.get_user(user_id)
+        user = bot.get_user(int(user_id))
         await user.send(message)
 
 
 async def send_mention_message(recipient, game_state, user_id_key):
-    if isinstance(game_state.data[user_id_key], Iterable):
+    if type(game_state.data[user_id_key]) == list:
         mention = generate_mention(user_ids=game_state.data[user_id_key])
     else:
         mention = generate_mention(user_id=game_state.data[user_id_key])

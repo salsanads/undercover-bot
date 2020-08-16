@@ -37,11 +37,12 @@ def eliminate(room_id, user_id):
     kill_player(user_id)
     killed_player = Player.get(user_id)
     data = {"player": killed_player.user_id, "role": killed_player.role}
-    eliminated_role = GameState(Status.ELIMINATED_ROLE, data)
 
     if killed_player.role == Role.MR_WHITE.name:
+        eliminated_role = GameState(Status.ELIMINATED_MR_WHITE, data)
         game_state = GameState(Status.ASK_GUESSED_WORD)
         return [eliminated_role, game_state]
     else:
+        eliminated_role = GameState(Status.ELIMINATED_ROLE, data)
         game_state = evaluate_game(room_id)
         return [eliminated_role, game_state]
