@@ -72,11 +72,17 @@ async def start(ctx):
 @guild_only()
 async def eliminate(ctx):
     game_states = controllers.eliminate(ctx.channel.id, ctx.author.id)
+    user = bot.get_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             await send_mention_message(ctx, game_state, "playing_order")
+        elif (
+            game_state.status == Status.ELIMINATED_PLAYER_NOT_FOUND
+            or game_state.status == Status.ELIMINATED_PLAYER_ALREADY_KILLED
+            or game_state.status == Status.ELIMINATED_ROLE
+        ):
+            await send_mention_message(ctx, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:
-            user = bot.get_user(ctx.author.id)
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
         else:
@@ -131,6 +137,6 @@ async def send_mention_message(recipient, game_state, user_id_key):
     else:
         mention = generate_mention(user_id=game_state.data[user_id_key])
 
-    data = {user_id_key: mention}
-    message = generate_message(game_state.status.name, data)
+    game_state.data[user_id_key] = mention
+    message = generate_message(game_state.status.name, game_state.data)
     await recipient.send(message)
