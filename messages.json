@@ -13,5 +13,5 @@
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
   "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel",
   "ONGOING_GAME_NOT_FOUND": "There's no ongoing game in this server",
-  "NOT_IN_GUESSING_TURN": "Nope, it's not the time for guessing"
+  "NOT_IN_GUESSING_TURN": "It's not yet the time for guessing"
 }

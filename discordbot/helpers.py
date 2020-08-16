@@ -9,6 +9,7 @@ messages = json.load(messages_file)
 
 class CommandStatus(Enum):
     GUILD_ONLY_COMMAND = auto()
+    DM_ONLY_COMMAND = auto()
 
 
 def generate_message(key, params=None):
@@ -22,7 +23,7 @@ def generate_playing_order(user_ids):
     mentioned_users = []
 
     for user_id in user_ids:
-        mentioned_users.append('@<{u_id}>'.format(u_id=user_id))
+        mentioned_users.append("@<{u_id}>".format(u_id=user_id))
     playing_order = " ".join(mentioned_users)
 
-    return playing_order 
+    return playing_order
