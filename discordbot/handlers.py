@@ -82,20 +82,25 @@ async def eliminate(ctx):
 @bot.command(name="guess")
 @dm_only()
 async def guess(ctx):
-    # channel_id = ctx.channel.id
-    user_id = {ctx.author.id}
-    game_states = controllers.guess(user_id)
+    user_id = ctx.message.author.id
+    word = str(ctx.message.content).strip()
+    game_states = controllers.guess_word(user_id, word)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             user_ids = game_state.data["playing_order"]
+            channel = bot.get_channel(int(game_state.data["room_id"]))
             playing_order_data = generate_playing_order(user_ids)
             reply = generate_message(
                 game_state.status.name, playing_order_data
             )
-            await ctx.send(reply)
-        else:
+            await channel.send(reply)
+        elif game_state.status == Status.NOT_IN_GUESSING_TURN:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
+        else:
+            channel = bot.get_channel(int(game_state.data["room_id"]))
+            reply = generate_message(game_state.status.name, game_state.data)
+            await channel.send(reply)
 
 
 async def greet(user):
