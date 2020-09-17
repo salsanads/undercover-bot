@@ -1,7 +1,6 @@
 from discord.ext import commands
 from discord.ext.commands import Bot, dm_only, guild_only
 
-from quote import get_quote
 from undercover import Status, controllers
 from undercover.controllers.helpers import clear_game
 
@@ -29,24 +28,6 @@ async def on_command_error(ctx, error):
         await ctx.send(generate_message(CommandStatus.DM_ONLY_COMMAND.name))
     else:
         raise error
-
-
-@bot.command(name="dm")
-async def dm(ctx, to):
-    if to == "me":
-        await greet(ctx.author)
-    else:
-        for user in ctx.message.mentions:
-            await greet(user)
-
-
-@bot.command(name="quote")
-async def quote(ctx):
-    q = get_quote()
-    reply = "> *{content}*\n> \n> {author}".format(
-        content=q["content"], author=q["author"]
-    )
-    await ctx.send(reply)
 
 
 @bot.command(name="start")
@@ -125,11 +106,6 @@ async def guess(ctx):
 async def clear(ctx):
     clear_game(ctx.channel.id)
     await ctx.send("The game has been cleared")
-
-
-async def greet(user):
-    response = "Hi {mention}!".format(mention=user.mention)
-    await user.send(response)
 
 
 def retrieve_player_ids(ctx):
