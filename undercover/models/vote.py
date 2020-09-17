@@ -6,12 +6,12 @@ from .database import Base, add_session
 class Vote(Base):
     __tablename__ = "vote"
 
-    voter_id = Column(Integer, primary_key=True, nullable=False)
+    vote_id = Column(Integer, primary_key=True, nullable=False)
     poll_id = Column(Integer, ForeignKey("poll.poll_id"), index=True)
     voted_user_id = Column(Integer, nullable=False, index=True)
 
-    def __init__(self, voter_id, poll_id, voted_user_id):
-        self.voter_id = voter_id
+    def __init__(self, vote_id, poll_id, voted_user_id):
+        self.vote_id = vote_id
         self.poll_id = poll_id
         self.voted_user_id = voted_user_id
 
@@ -22,8 +22,8 @@ class Vote(Base):
 
     @classmethod
     @add_session
-    def get(cls, voter_id, session):
-        vote = session.query(cls).filter_by(voter_id=voter_id).first()
+    def get(cls, vote_id, session):
+        vote = session.query(cls).filter_by(vote_id=vote_id).first()
         return vote
 
     @classmethod
@@ -37,8 +37,8 @@ class Vote(Base):
 
     @classmethod
     @add_session
-    def update(cls, voter_id, session, **kwargs):
-        vote = session.query(cls).get(voter_id)
+    def update(cls, vote_id, session, **kwargs):
+        vote = session.query(cls).get(vote_id)
         if vote is None:
             raise Exception("No votes found")
         for column, updated_value in kwargs.items():
