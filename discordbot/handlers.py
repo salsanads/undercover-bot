@@ -32,12 +32,14 @@ async def on_command_error(ctx, error):
 
 @bot.command(name="howto")
 async def handle_how_to(ctx):
+    """Shows game guide"""
     await send_how_to_message(ctx)
 
 
 @bot.command(name="start")
 @guild_only()
 async def handle_start(ctx):
+    """Starts the game"""
     channel_id = ctx.channel.id
     user_ids = retrieve_player_ids(ctx)
     game_states = controllers.start(str(channel_id), user_ids)
@@ -57,6 +59,7 @@ async def handle_start(ctx):
 @bot.command(name="eliminated")
 @guild_only()
 async def handle_eliminate(ctx):
+    """Eliminates own self"""
     game_states = controllers.eliminate(
         str(ctx.channel.id), str(ctx.author.id)
     )
@@ -87,6 +90,7 @@ async def handle_eliminate(ctx):
 @bot.command(name="guess")
 @dm_only()
 async def handle_guess(ctx):
+    """Guesses Civilian's word"""
     user_id = ctx.message.author.id
     word = " ".join(ctx.message.content.split(" ")[1:])
     game_states = controllers.guess(str(user_id), word)
@@ -110,6 +114,7 @@ async def handle_guess(ctx):
 @bot.command(name="clear")
 @guild_only()
 async def handle_clear(ctx):
+    """Clears the game"""
     clear_game(ctx.channel.id)
     await ctx.send("The game has been cleared")
 
