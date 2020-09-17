@@ -56,11 +56,11 @@ async def start(ctx):
     game_states = controllers.start(str(channel_id), user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
-            await send_mention_message(ctx, game_state, "playing_users")
+            await send_mention_message(ctx, game_state, ["playing_users"])
         elif game_state.status == Status.PLAYED_WORD:
             await send_user_words_message(game_state)
         elif game_state.status == Status.PLAYING_ORDER:
-            await send_mention_message(ctx, game_state, "playing_order")
+            await send_mention_message(ctx, game_state, ["playing_order"])
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
@@ -75,7 +75,7 @@ async def eliminate(ctx):
     user = bot.get_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
-            await send_mention_message(ctx, game_state, "playing_order")
+            await send_mention_message(ctx, game_state, ["playing_order"])
         elif (
             game_state.status == Status.ELIMINATED_PLAYER_NOT_FOUND
             or game_state.status == Status.ELIMINATED_PLAYER_ALREADY_KILLED
@@ -83,10 +83,14 @@ async def eliminate(ctx):
             or game_state.status == Status.UNDERCOVER_ELIMINATED
             or game_state.status == Status.MR_WHITE_ELIMINATED
         ):
-            await send_mention_message(ctx, game_state, "player")
+            await send_mention_message(ctx, game_state, ["player"])
         elif game_state.status == Status.ASK_GUESSED_WORD:
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
+        elif game_state.status == Status.SUMMARY:
+            await send_mention_message(
+                ctx, game_state, ["civilians", "undercovers", "mr_whites"]
+            )
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
@@ -97,14 +101,18 @@ async def eliminate(ctx):
 async def guess(ctx):
     user_id = ctx.message.author.id
     word = " ".join(ctx.message.content.split(" ")[1:])
-    game_states = controllers.guess_word(str(user_id), word)
+    game_states = controllers.guess(str(user_id), word)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             channel = bot.get_channel(int(game_state.room_id))
-            await send_mention_message(channel, game_state, "playing_order")
+            await send_mention_message(channel, game_state, ["playing_order"])
         elif game_state.status == Status.NOT_IN_GUESSING_TURN:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
+        elif game_state.status == Status.SUMMARY:
+            await send_mention_message(
+                ctx, game_state, ["civilians", "undercovers", "mr_whites"]
+            )
         else:
             channel = bot.get_channel(int(game_state.room_id))
             reply = generate_message(game_state.status.name, game_state.data)
@@ -133,12 +141,16 @@ async def send_user_words_message(game_state):
         await user.send(message)
 
 
-async def send_mention_message(recipient, game_state, user_id_key):
-    if type(game_state.data[user_id_key]) == list:
-        mention = generate_mention(user_ids=game_state.data[user_id_key])
-    else:
-        mention = generate_mention(user_id=game_state.data[user_id_key])
+async def send_mention_message(recipient, game_state, user_id_keys):
+    for user_id_key in user_id_keys:
+        if type(game_state.data[user_id_key]) == list:
+            game_state.data[user_id_key] = generate_mention(
+                user_ids=game_state.data[user_id_key]
+            )
+        else:
+            game_state.data[user_id_key] = generate_mention(
+                user_id=game_state.data[user_id_key]
+            )
 
-    game_state.data[user_id_key] = mention
     message = generate_message(game_state.status.name, game_state.data)
     await recipient.send(message)

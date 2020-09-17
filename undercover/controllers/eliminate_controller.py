@@ -38,14 +38,15 @@ def eliminate(room_id, user_id):
     killed_player = Player.get(user_id)
     data = {"player": killed_player.user_id, "role": killed_player.role}
 
+    game_states = []
     if killed_player.role == Role.CIVILIAN.name:
-        eliminated_role = GameState(Status.CIVILIAN_ELIMINATED, data)
-        game_state = evaluate_game(room_id)
+        game_states.append(GameState(Status.CIVILIAN_ELIMINATED, data))
+        game_states += evaluate_game(room_id)
     elif killed_player.role == Role.UNDERCOVER.name:
-        eliminated_role = GameState(Status.UNDERCOVER_ELIMINATED, data)
-        game_state = evaluate_game(room_id)
-    else:
-        eliminated_role = GameState(Status.MR_WHITE_ELIMINATED, data)
-        game_state = GameState(Status.ASK_GUESSED_WORD)
+        game_states.append(GameState(Status.UNDERCOVER_ELIMINATED, data))
+        game_states += evaluate_game(room_id)
+    elif killed_player.role == Role.MR_WHITE.name:
+        game_states.append(GameState(Status.MR_WHITE_ELIMINATED, data))
+        game_states.append(GameState(Status.ASK_GUESSED_WORD))
 
-    return [eliminated_role, game_state]
+    return game_states

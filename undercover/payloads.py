@@ -25,6 +25,7 @@ class Status(Enum):
     CIVILIAN_WIN = auto()
     NON_CIVILIAN_WIN = auto()
     MR_WHITE_WIN = auto()
+    SUMMARY = auto()
 
     # UNHAPPY PATH
     INVALID_PLAYER_NUMBER = auto()

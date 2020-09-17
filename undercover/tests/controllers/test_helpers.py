@@ -39,13 +39,13 @@ class TestEvaluateGame:
         for user_id in killed_user_ids:
             kill_player(user_id)
 
-        game_state = evaluate_game(room_id)
+        game_states = evaluate_game(room_id)
 
-        assert game_state.status is expected_status
-        if game_state.status is not Status.PLAYING_ORDER:
-            assert game_state.data is None
+        assert game_states[0].status is expected_status
+        if game_states[0].status is not Status.PLAYING_ORDER:
+            assert game_states[0].data is None
         else:
-            new_playing_order = game_state.data["playing_order"]
+            new_playing_order = game_states[0].data["playing_order"]
             assert isinstance(new_playing_order, list)
             assert len(new_playing_order) == Player.num_alive_players(room_id)
             print(f"the new playing order is: {new_playing_order}")
@@ -56,7 +56,7 @@ class TestEvaluateGame:
         remaining_player = (
             session.query(Player).filter_by(room_id=room_id).first()
         )
-        if game_state.status is not Status.PLAYING_ORDER:
+        if game_states[0].status is not Status.PLAYING_ORDER:
             assert remaining_role is None
             assert remaining_player is None
         else:

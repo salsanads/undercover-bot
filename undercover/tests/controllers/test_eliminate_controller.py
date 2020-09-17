@@ -2,7 +2,7 @@ import pytest
 
 from undercover.controllers.eliminate_controller import eliminate, kill_player
 from undercover.models import Player, PlayingRole
-from undercover.payloads import GameState, Role, Status
+from undercover.payloads import Role, Status
 
 
 class TestEliminateController:
@@ -61,7 +61,14 @@ class TestEliminateController:
             kill_player(user_id)
 
         game_states = eliminate(room_id, eliminated_user_id)
-        assert len(game_states) == 2
+
+        if (
+            expected_status == Status.CIVILIAN_WIN
+            or expected_status == Status.NON_CIVILIAN_WIN
+        ):
+            assert len(game_states) == 3
+        else:
+            assert len(game_states) == 2
 
         role_game_state = game_states[0]
         if eliminated_role == Role.CIVILIAN.name:

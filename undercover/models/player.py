@@ -40,6 +40,11 @@ class Player(Base):
         return session.query(cls).filter_by(user_id=user_id).first()
 
     @classmethod
+    @add_session(expire_on_commit=False)
+    def get_all(cls, room_id, session):
+        return session.query(cls).filter_by(room_id=room_id).all()
+
+    @classmethod
     @add_session
     def filter_exists(cls, user_ids, session):
         existing_user_ids = (
