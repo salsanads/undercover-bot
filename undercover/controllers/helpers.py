@@ -21,6 +21,21 @@ def ongoing_game_found(should_be_found):
     return inner
 
 
+# generalize @elimination_valid and its payload to this
+def player_valid(func):
+    @wraps(func)
+    def wrapper(room_id, user_id, *args, **kwargs):
+        player = Player.get(user_id)
+        data = {"player": user_id}
+        if player is None or player.room_id != room_id:
+            return [GameState(Status.PLAYER_NOT_FOUND, data)]
+        if not player.alive:
+            return [GameState(Status.PLAYER_ALREADY_KILLED, data)]
+        return func(room_id, user_id, *args, **kwargs)
+
+    return wrapper
+
+
 def evaluate_game(room_id):
     n_alive_civilians = Player.num_alive_players(
         room_id, role=Role.CIVILIAN.name

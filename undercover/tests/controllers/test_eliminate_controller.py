@@ -88,9 +88,9 @@ class TestEliminateController:
         "room_id, user_id, expected_status",
         [
             (3, 1, Status.ONGOING_GAME_NOT_FOUND),
-            (1, 7, Status.ELIMINATED_PLAYER_NOT_FOUND),
-            (2, 1, Status.ELIMINATED_PLAYER_NOT_FOUND),
-            (1, 2, Status.ELIMINATED_PLAYER_ALREADY_KILLED),
+            (1, 7, Status.PLAYER_NOT_FOUND),
+            (2, 1, Status.PLAYER_NOT_FOUND),
+            (1, 2, Status.PLAYER_ALREADY_KILLED),
         ],
     )
     def test_eliminate_invalid_scenario(room_id, user_id, expected_status):
