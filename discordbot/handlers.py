@@ -79,8 +79,9 @@ async def eliminate(ctx):
         elif (
             game_state.status == Status.ELIMINATED_PLAYER_NOT_FOUND
             or game_state.status == Status.ELIMINATED_PLAYER_ALREADY_KILLED
-            or game_state.status == Status.ELIMINATED_ROLE
-            or game_state.status == Status.ELIMINATED_MR_WHITE
+            or game_state.status == Status.CIVILIAN_ELIMINATED
+            or game_state.status == Status.UNDERCOVER_ELIMINATED
+            or game_state.status == Status.MR_WHITE_ELIMINATED
         ):
             await send_mention_message(ctx, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:

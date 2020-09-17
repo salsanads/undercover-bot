@@ -63,15 +63,20 @@ class TestEliminateController:
         game_states = eliminate(room_id, eliminated_user_id)
         assert len(game_states) == 2
 
-        returned_elimination_role = game_states[0]
-        assert returned_elimination_role.status is Status.ELIMINATED_ROLE
-        assert "player" in returned_elimination_role.data
-        assert returned_elimination_role.data["player"] == eliminated_user_id
-        assert "role" in returned_elimination_role.data
-        assert returned_elimination_role.data["role"] == eliminated_role
+        role_game_state = game_states[0]
+        if eliminated_role == Role.CIVILIAN.name:
+            assert role_game_state.status is Status.CIVILIAN_ELIMINATED
+        elif eliminated_role == Role.UNDERCOVER.name:
+            assert role_game_state.status is Status.UNDERCOVER_ELIMINATED
+        else:
+            assert role_game_state.status is Status.MR_WHITE_ELIMINATED
+        assert "player" in role_game_state.data
+        assert role_game_state.data["player"] == eliminated_user_id
+        assert "role" in role_game_state.data
+        assert role_game_state.data["role"] == eliminated_role
 
-        elimination_result = game_states[1]
-        assert elimination_result.status is expected_status
+        result_game_state = game_states[1]
+        assert result_game_state.status is expected_status
 
     @staticmethod
     @pytest.mark.parametrize(

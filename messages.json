@@ -1,8 +1,9 @@
 {
   "PLAYED_WORD": "Hi, your word is **{word}**",
   "PLAYING_ORDER": "Start to describe the word by order {playing_order}",
-  "ELIMINATED_ROLE": "{player} with role: {role} has been eliminated",
-  "ELIMINATED_MR_WHITE": "{player} with role: {role} has been eliminated, waiting for Mr. White to guess...",
+  "CIVILIAN_ELIMINATED": "{player} with role Civilian has been eliminated",
+  "UNDERCOVER_ELIMINATED": "{player} with role Undercover has been eliminated",
+  "MR_WHITE_ELIMINATED": "{player} with role Mr. White has been eliminated, waiting for Mr. White to guess...",
   "ASK_GUESSED_WORD": "Hi Mr. White, please guess the word using `!guess` command",
   "CIVILIAN_WIN": "All intruders have been eliminated, Civilians win",
   "NON_CIVILIAN_WIN": "There's only one Civilian left, Undercovers and Mr.White win",

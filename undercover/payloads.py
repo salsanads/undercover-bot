@@ -18,8 +18,9 @@ class Status(Enum):
     # HAPPY PATH
     PLAYED_WORD = auto()
     PLAYING_ORDER = auto()
-    ELIMINATED_ROLE = auto()
-    ELIMINATED_MR_WHITE = auto()
+    CIVILIAN_ELIMINATED = auto()
+    UNDERCOVER_ELIMINATED = auto()
+    MR_WHITE_ELIMINATED = auto()
     ASK_GUESSED_WORD = auto()
     CIVILIAN_WIN = auto()
     NON_CIVILIAN_WIN = auto()
