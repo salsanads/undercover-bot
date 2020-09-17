@@ -7,7 +7,7 @@ class Vote(Base):
     __tablename__ = "vote"
 
     voter_id = Column(Integer, primary_key=True, nullable=False)
-    poll_id = Column(Integer, ForeignKey("poll.room_id"), index=True)
+    poll_id = Column(Integer, ForeignKey("poll.poll_id"), index=True)
     voted_user_id = Column(Integer, nullable=False, index=True)
 
     def __init__(self, voter_id, poll_id, voted_user_id):
