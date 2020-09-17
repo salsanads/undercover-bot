@@ -18,7 +18,7 @@ class Poll(Base):
         self.room_id = room_id
 
     @classmethod
-    @add_session
+    @add_session(expire_on_commit=False)
     def get(cls, room_id, session):
         poll_id = session.query(cls.poll_id).filter_by(room_id=room_id).first()
         return poll_id

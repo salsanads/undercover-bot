@@ -21,13 +21,13 @@ class Vote(Base):
         session.add(vote)
 
     @classmethod
-    @add_session
+    @add_session(expire_on_commit=False)
     def get(cls, vote_id, session):
         vote = session.query(cls).filter_by(vote_id=vote_id).first()
         return vote
 
     @classmethod
-    @add_session
+    @add_session(expire_on_commit=False)
     def find_all(cls, session, **kwargs):
         for attr in kwargs:
             if not hasattr(cls, attr):
@@ -49,3 +49,8 @@ class Vote(Base):
     @add_session
     def delete_all(cls, poll_id, session):
         session.query(cls).filter_by(poll_id=poll_id).delete()
+
+    @classmethod
+    @add_session
+    def delete(cls, vote_id, session):
+        session.query(cls).filter_by(vote_id=vote_id).delete()
