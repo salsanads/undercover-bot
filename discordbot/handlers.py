@@ -30,9 +30,14 @@ async def on_command_error(ctx, error):
         raise error
 
 
+@bot.command(name="howto")
+async def handle_how_to(ctx):
+    await send_how_to_message(ctx)
+
+
 @bot.command(name="start")
 @guild_only()
-async def start(ctx):
+async def handle_start(ctx):
     channel_id = ctx.channel.id
     user_ids = retrieve_player_ids(ctx)
     game_states = controllers.start(str(channel_id), user_ids)
@@ -42,6 +47,7 @@ async def start(ctx):
         elif game_state.status == Status.PLAYED_WORD:
             await send_user_words_message(game_state)
         elif game_state.status == Status.PLAYING_ORDER:
+            await send_how_to_message(ctx)
             await send_mention_message(ctx, game_state, ["playing_order"])
         else:
             reply = generate_message(game_state.status.name, game_state.data)
@@ -50,7 +56,7 @@ async def start(ctx):
 
 @bot.command(name="eliminated")
 @guild_only()
-async def eliminate(ctx):
+async def handle_eliminate(ctx):
     game_states = controllers.eliminate(
         str(ctx.channel.id), str(ctx.author.id)
     )
@@ -80,7 +86,7 @@ async def eliminate(ctx):
 
 @bot.command(name="guess")
 @dm_only()
-async def guess(ctx):
+async def handle_guess(ctx):
     user_id = ctx.message.author.id
     word = " ".join(ctx.message.content.split(" ")[1:])
     game_states = controllers.guess(str(user_id), word)
@@ -103,9 +109,14 @@ async def guess(ctx):
 
 @bot.command(name="clear")
 @guild_only()
-async def clear(ctx):
+async def handle_clear(ctx):
     clear_game(ctx.channel.id)
     await ctx.send("The game has been cleared")
+
+
+async def send_how_to_message(ctx):
+    reply = generate_message(CommandStatus.HOW_TO.name)
+    await ctx.send(reply)
 
 
 def retrieve_player_ids(ctx):
