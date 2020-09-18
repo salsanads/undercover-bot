@@ -1,3 +1,4 @@
+from discord import Activity, ActivityType
 from discord.ext import commands
 from discord.ext.commands import Bot, dm_only, guild_only
 
@@ -13,6 +14,9 @@ bot = Bot(command_prefix="!")
 @bot.event
 async def on_ready():
     print(f"{bot.user.name} has connected to Discord!")
+    await bot.change_presence(
+        activity=Activity(type=ActivityType.listening, name="!help")
+    )
 
 
 @bot.event
