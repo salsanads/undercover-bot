@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, UniqueConstraint
+from sqlalchemy import BigInteger, Column, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from .database import Base, add_session
@@ -7,8 +7,8 @@ from .database import Base, add_session
 class Poll(Base):
     __tablename__ = "poll"
 
-    poll_id = Column(Integer, nullable=False, primary_key=True)
-    room_id = Column(Integer, nullable=False, index=True)
+    poll_id = Column(BigInteger, nullable=False, primary_key=True)
+    room_id = Column(BigInteger, nullable=False, index=True)
     votes = relationship("Vote", backref="poll")
 
     UniqueConstraint(room_id)

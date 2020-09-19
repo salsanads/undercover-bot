@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import BigInteger, Column, ForeignKey
 
 from .database import Base, add_session
 
@@ -6,9 +6,9 @@ from .database import Base, add_session
 class Vote(Base):
     __tablename__ = "vote"
 
-    voter_id = Column(Integer, primary_key=True, nullable=False)
-    poll_id = Column(Integer, ForeignKey("poll.poll_id"), index=True)
-    voted_id = Column(Integer, nullable=False)
+    voter_id = Column(BigInteger, primary_key=True, nullable=False)
+    poll_id = Column(BigInteger, ForeignKey("poll.poll_id"), index=True)
+    voted_id = Column(BigInteger, nullable=False)
 
     def __init__(self, voter_id, poll_id, voted_id):
         self.voter_id = voter_id
