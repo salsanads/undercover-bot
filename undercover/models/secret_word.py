@@ -5,7 +5,7 @@ from .database import Base, add_session
 
 
 class SecretWord(Base):
-    __tablename__ = "secret_words"
+    __tablename__ = "secret_word"
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     # temporary workaround due to unsupported ARRAY in SQLite
