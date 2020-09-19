@@ -10,7 +10,9 @@ class PlayingRole(Base):
     room_id = Column(String, primary_key=True)
     role = Column(String, primary_key=True)
     word = Column(String)
-    players = relationship("Player", backref="playing_role")
+    players = relationship(
+        "Player", backref="playing_role", cascade="all,delete-orphan"
+    )
 
     def __init__(self, room_id, role, word=None):
         self.room_id = room_id
@@ -37,7 +39,7 @@ class PlayingRole(Base):
             .first()
         )
         return word
-   
+
     @classmethod
     @add_session
     def delete(cls, room_id, session):

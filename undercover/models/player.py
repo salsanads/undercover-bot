@@ -6,20 +6,21 @@ from .database import Base, add_session
 from .playing_role import PlayingRole
 
 
-# TODO: add CASCADE
 class Player(Base):
     __tablename__ = "player"
 
     user_id = Column(String, primary_key=True)
     alive = Column(Boolean, nullable=False)
     guessing = Column(Boolean, nullable=False)
-    room_id = Column(String, nullable=False)
+    room_id = Column(String, nullable=False, index=True)
     role = Column(String, nullable=False)
     __table_args__ = (
         ForeignKeyConstraint(
-            [room_id, role], [PlayingRole.room_id, PlayingRole.role]
+            [room_id, role],
+            [PlayingRole.room_id, PlayingRole.role],
+            onupdate="CASCADE",
+            ondelete="CASCADE",
         ),
-        {},
     )
 
     def __init__(self, user_id, room_id, role, alive=True, guessing=False):
