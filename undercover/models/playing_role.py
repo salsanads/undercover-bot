@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, literal
+from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
 from .database import Base, add_session
@@ -7,7 +7,7 @@ from .database import Base, add_session
 class PlayingRole(Base):
     __tablename__ = "playing_role"
 
-    room_id = Column(String, primary_key=True)
+    room_id = Column(BigInteger, primary_key=True)
     role = Column(String, primary_key=True)
     word = Column(String)
     players = relationship(
