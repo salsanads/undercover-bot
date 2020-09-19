@@ -4,7 +4,7 @@ from .models import init_db
 from .payloads import GameState, Role, Status
 
 
-def main(db_url, env="dev"):
+def main(database_url, env="dev"):
     echo = env != "prod"
-    engine = create_engine(db_url, echo=echo)
+    engine = create_engine(database_url, echo=echo)
     init_db(engine)

@@ -9,9 +9,9 @@ import undercover
 def main():
     load_dotenv()
 
-    db_url = os.getenv("DB_URL")
+    database_url = os.getenv("DATABASE_URL")
     env = os.getenv("ENV")
-    undercover.main(db_url, env)
+    undercover.main(database_url, env)
 
     bot_token = os.getenv("BOT_TOKEN")
     discordbot.main(bot_token)
