@@ -1,3 +1,5 @@
+import traceback
+
 from discord import Activity, ActivityType
 from discord.ext import commands
 from discord.ext.commands import Bot, dm_only, guild_only
@@ -28,10 +30,12 @@ async def on_command_error(ctx, error):
             await ctx.send(
                 generate_message(CommandStatus.HUMAN_PLAYER_ONLY.name)
             )
+        else:
+            traceback.print_exception(type(error), error, error.__traceback__)
     elif isinstance(error, commands.errors.PrivateMessageOnly):
         await ctx.send(generate_message(CommandStatus.DM_ONLY_COMMAND.name))
     else:
-        raise error
+        traceback.print_exception(type(error), error, error.__traceback__)
 
 
 @bot.command(name="howto")
