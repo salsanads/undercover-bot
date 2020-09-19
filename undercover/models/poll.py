@@ -8,10 +8,8 @@ class Poll(Base):
     __tablename__ = "poll"
 
     poll_id = Column(BigInteger, nullable=False, primary_key=True)
-    room_id = Column(BigInteger, nullable=False, index=True)
+    room_id = Column(BigInteger, nullable=False, unique=True)
     votes = relationship("Vote", backref="poll")
-
-    UniqueConstraint(room_id)
 
     def __init__(self, poll_id, room_id):
         self.poll_id = poll_id
