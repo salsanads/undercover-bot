@@ -12,8 +12,8 @@ class TestPollVote:
     def populate_db(session):
         for poll_id, room_id in EXISTING_POLLS:
             session.add(Poll(poll_id, room_id))
-        for voter_id, poll_id, voted_user_id in EXISTING_VOTES:
-            session.add(Vote(voter_id, poll_id, voted_user_id))
+        for voter_id, poll_id, voted_id in EXISTING_VOTES:
+            session.add(Vote(voter_id, poll_id, voted_id))
         session.commit()
         yield
         session.query(Poll).delete()
@@ -33,13 +33,13 @@ class TestPollVote:
     def test_add_vote(session):
         poll_id = 3
         voter_id = 4
-        voted_user_id = 4
-        Vote.add(Vote(voter_id, poll_id, voted_user_id))
+        voted_id = 4
+        Vote.add(Vote(voter_id, poll_id, voted_id))
         vote = session.query(Vote).filter_by(voter_id=voter_id).first()
 
         assert vote.poll_id == poll_id
         assert vote.voter_id == voter_id
-        assert vote.voted_user_id == voted_user_id
+        assert vote.voted_id == voted_id
 
     @staticmethod
     def test_add_duplicate_poll():
@@ -52,9 +52,9 @@ class TestPollVote:
     def test_add_duplicate_vote():
         voter_id = 1
         poll_id = 2
-        voted_user_id = 3
+        voted_id = 3
         with pytest.raises(Exception):
-            Vote.add(Vote(voter_id, poll_id, voted_user_id))
+            Vote.add(Vote(voter_id, poll_id, voted_id))
 
     @staticmethod
     def test_delete(session):
@@ -80,14 +80,14 @@ class TestPollVote:
         votes = Vote.find_all(poll_id=1)
         assert len(votes) == 2
         for vote in votes:
-            print(vote.voter_id, vote.poll_id, vote.voted_user_id)
+            print(vote.voter_id, vote.poll_id, vote.voted_id)
 
     @staticmethod
     def test_update_vote():
         value = 3
         for voter_id, _, _ in EXISTING_VOTES:
-            Vote.update(voter_id, voted_user_id=value)
+            Vote.update(voter_id, voted_id=value)
 
         votes = Vote.find_all()
         for vote in votes:
-            assert vote.voted_user_id == value
+            assert vote.voted_id == value

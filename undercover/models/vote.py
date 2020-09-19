@@ -8,12 +8,12 @@ class Vote(Base):
 
     voter_id = Column(Integer, primary_key=True, nullable=False)
     poll_id = Column(Integer, ForeignKey("poll.poll_id"), index=True)
-    voted_user_id = Column(Integer, nullable=False, index=True)
+    voted_id = Column(Integer, nullable=False, index=True)
 
-    def __init__(self, voter_id, poll_id, voted_user_id):
+    def __init__(self, voter_id, poll_id, voted_id):
         self.voter_id = voter_id
         self.poll_id = poll_id
-        self.voted_user_id = voted_user_id
+        self.voted_id = voted_id
 
     @classmethod
     @add_session
