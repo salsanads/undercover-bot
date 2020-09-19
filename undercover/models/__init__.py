@@ -4,3 +4,4 @@ from .playing_role import PlayingRole
 from .poll import Poll
 from .secret_word import SecretWord
 from .vote import Vote
+from .word_message import WordMessage
