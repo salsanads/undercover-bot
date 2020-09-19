@@ -18,13 +18,12 @@ class Player(Base):
     guessing = Column(Boolean, nullable=False)
     room_id = Column(BigInteger, nullable=False, index=True)
     role = Column(String, nullable=False)
-    __table_args__ = (
-        ForeignKeyConstraint(
-            [room_id, role],
-            [PlayingRole.room_id, PlayingRole.role],
-            onupdate="CASCADE",
-            ondelete="CASCADE",
-        ),
+
+    ForeignKeyConstraint(
+        [room_id, role],
+        [PlayingRole.room_id, PlayingRole.role],
+        onupdate="CASCADE",
+        ondelete="CASCADE",
     )
 
     def __init__(self, user_id, room_id, role, alive=True, guessing=False):

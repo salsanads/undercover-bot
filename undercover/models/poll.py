@@ -9,7 +9,7 @@ class Poll(Base):
 
     poll_id = Column(BigInteger, nullable=False, primary_key=True)
     room_id = Column(BigInteger, nullable=False, unique=True)
-    votes = relationship("Vote", backref="poll")
+    votes = relationship("Vote", backref="poll", cascade="all,delete-orphan")
 
     def __init__(self, poll_id, room_id):
         self.poll_id = poll_id

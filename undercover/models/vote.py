@@ -7,7 +7,11 @@ class Vote(Base):
     __tablename__ = "vote"
 
     voter_id = Column(BigInteger, primary_key=True, nullable=False)
-    poll_id = Column(BigInteger, ForeignKey("poll.poll_id"), index=True)
+    poll_id = Column(
+        BigInteger,
+        ForeignKey("poll.poll_id", onupdate="CASCADE", ondelete="CASCADE"),
+        index=True,
+    )
     voted_id = Column(BigInteger, nullable=False)
 
     def __init__(self, voter_id, poll_id, voted_id):
