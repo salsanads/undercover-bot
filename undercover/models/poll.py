@@ -11,7 +11,7 @@ class Poll(Base):
     room_id = Column(Integer, nullable=False, index=True)
     votes = relationship("Vote", backref="poll")
 
-    UniqueConstraint(poll_id, room_id)
+    UniqueConstraint(room_id)
 
     def __init__(self, poll_id, room_id):
         self.poll_id = poll_id
