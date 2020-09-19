@@ -1,3 +1,4 @@
+import asyncio
 import traceback
 
 from discord import Activity, ActivityType
@@ -11,6 +12,7 @@ from .errors import BotPlayerFound
 from .helpers import CommandStatus, generate_mention, generate_message
 
 bot = Bot(command_prefix="!")
+SHOW_PLAYED_WORDS_DURATION = 5  # seconds
 
 
 @bot.event
@@ -85,9 +87,7 @@ async def handle_eliminate(ctx):
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
         elif game_state.status == Status.SUMMARY:
-            await send_mention_message(
-                ctx, game_state, ["civilians", "undercovers", "mr_whites"]
-            )
+            await send_summary_message(ctx, game_state)
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
@@ -108,9 +108,7 @@ async def handle_guess(ctx):
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
         elif game_state.status == Status.SUMMARY:
-            await send_mention_message(
-                ctx, game_state, ["civilians", "undercovers", "mr_whites"]
-            )
+            await send_summary_message(ctx, game_state)
         else:
             channel = bot.get_channel(game_state.room_id)
             reply = generate_message(game_state.status.name, game_state.data)
@@ -159,4 +157,14 @@ async def send_mention_message(recipient, game_state, user_id_keys):
             )
 
     message = generate_message(game_state.status.name, game_state.data)
-    await recipient.send(message)
+    return await recipient.send(message)
+
+
+async def send_summary_message(ctx, game_state):
+    user_id_keys = ["civilians", "undercovers", "mr_whites"]
+    message = await send_mention_message(ctx, game_state, user_id_keys)
+    await asyncio.sleep(SHOW_PLAYED_WORDS_DURATION)
+    game_state.data["civilian_word"] = "*deleted*"
+    game_state.data["undercover_word"] = "*deleted*"
+    content = generate_message(game_state.status.name, game_state.data)
+    await message.edit(content=content)
