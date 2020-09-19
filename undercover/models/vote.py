@@ -8,7 +8,7 @@ class Vote(Base):
 
     voter_id = Column(Integer, primary_key=True, nullable=False)
     poll_id = Column(Integer, ForeignKey("poll.poll_id"), index=True)
-    voted_id = Column(Integer, nullable=False, index=True)
+    voted_id = Column(Integer, nullable=False)
 
     def __init__(self, voter_id, poll_id, voted_id):
         self.voter_id = voter_id
