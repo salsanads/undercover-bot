@@ -69,11 +69,17 @@ def generate_summary(room_id):
 
     for player in players:
         if player.role == Role.CIVILIAN.name:
-            civilians.append(player.user_id)
+            civilians.append(
+                {"user_id": player.user_id, "alive": player.alive}
+            )
         elif player.role == Role.UNDERCOVER.name:
-            undercovers.append(player.user_id)
+            undercovers.append(
+                {"user_id": player.user_id, "alive": player.alive}
+            )
         elif player.role == Role.MR_WHITE.name:
-            mr_whites.append(player.user_id)
+            mr_whites.append(
+                {"user_id": player.user_id, "alive": player.alive}
+            )
 
     return {
         "civilian_word": PlayingRole.get_word(room_id, Role.CIVILIAN).word,

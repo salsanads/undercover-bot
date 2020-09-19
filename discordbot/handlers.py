@@ -54,12 +54,12 @@ async def handle_start(ctx):
     game_states = controllers.start(ctx.channel.id, user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
-            await send_mention_message(ctx, game_state, ["playing_users"])
+            await send_mention_message(ctx, game_state, "playing_users")
         elif game_state.status == Status.PLAYED_WORD:
             await send_user_word_messages(game_state, ctx.channel.id)
         elif game_state.status == Status.PLAYING_ORDER:
             await send_how_to_message(ctx)
-            await send_mention_message(ctx, game_state, ["playing_order"])
+            await send_mention_message(ctx, game_state, "playing_order")
         else:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
@@ -73,7 +73,7 @@ async def handle_eliminate(ctx):
     user = bot.get_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
-            await send_mention_message(ctx, game_state, ["playing_order"])
+            await send_mention_message(ctx, game_state, "playing_order")
         elif (
             game_state.status == Status.ELIMINATED_PLAYER_NOT_FOUND
             or game_state.status == Status.ELIMINATED_PLAYER_ALREADY_KILLED
@@ -81,7 +81,7 @@ async def handle_eliminate(ctx):
             or game_state.status == Status.UNDERCOVER_ELIMINATED
             or game_state.status == Status.MR_WHITE_ELIMINATED
         ):
-            await send_mention_message(ctx, game_state, ["player"])
+            await send_mention_message(ctx, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
@@ -103,7 +103,7 @@ async def handle_guess(ctx):
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             channel = bot.get_channel(game_state.room_id)
-            await send_mention_message(channel, game_state, ["playing_order"])
+            await send_mention_message(channel, game_state, "playing_order")
         elif game_state.status == Status.NOT_IN_GUESSING_TURN:
             reply = generate_message(game_state.status.name, game_state.data)
             await ctx.send(reply)
@@ -152,25 +152,40 @@ async def send_user_word_messages(game_state, channel_id):
     models.WordMessage.insert_all(word_messages)
 
 
-async def send_mention_message(recipient, game_state, user_id_keys):
-    for user_id_key in user_id_keys:
-        if type(game_state.data[user_id_key]) == list:
-            game_state.data[user_id_key] = generate_mention(
-                user_ids=game_state.data[user_id_key]
-            )
-        else:
-            game_state.data[user_id_key] = generate_mention(
-                user_id=game_state.data[user_id_key]
-            )
-
+async def send_mention_message(recipient, game_state, user_id_key):
+    if type(game_state.data[user_id_key]) == list:
+        game_state.data[user_id_key] = generate_mention(
+            user_ids=game_state.data[user_id_key]
+        )
+    else:
+        game_state.data[user_id_key] = generate_mention(
+            user_id=game_state.data[user_id_key]
+        )
     message = generate_message(game_state.status.name, game_state.data)
     return await recipient.send(message)
 
 
 async def send_summary_message(ctx, game_state):
-    user_id_keys = ["civilians", "undercovers", "mr_whites"]
-    message = await send_mention_message(ctx, game_state, user_id_keys)
+    players_keys = ["civilians", "undercovers", "mr_whites"]
+    for players_key in players_keys:
+        players = game_state.data[players_key]
+        mentions = []
+        for player in players:
+            if player["alive"]:
+                mentions.append(generate_mention(user_id=player["user_id"]))
+            else:
+                mentions.append(
+                    generate_mention(
+                        user_id=player["user_id"], style="~~{mention}~~"
+                    )
+                )
+        one_line_mentions = " ".join(mentions)
+        game_state.data[players_key] = one_line_mentions
+    content = generate_message(game_state.status.name, game_state.data)
+    message = await ctx.send(content)
+
     await asyncio.sleep(SHOW_PLAYED_WORDS_DURATION)
+
     game_state.data["civilian_word"] = "*deleted*"
     game_state.data["undercover_word"] = "*deleted*"
     content = generate_message(game_state.status.name, game_state.data)
