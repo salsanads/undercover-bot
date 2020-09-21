@@ -16,8 +16,10 @@
   "HUMAN_PLAYER_ONLY": "Sorry, bots are not allowed to join the game",
   "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
+  "ONGOING_POLL_FOUND": "There's an ongoing poll in this channel, wait it to finish first",
   "PLAYING_USER_FOUND": "{playing_users} currently playing the game on other channel",
   "ONGOING_GAME_NOT_FOUND": "There's no ongoing game in this server",
+  "ONGOING_POLL_NOT_FOUND": "There's no ongoing poll in this channel",
   "PLAYER_NOT_FOUND": "Command failed: {player} is not playing in this channel",
   "PLAYER_ALREADY_KILLED": "Command failed: {player} has been eliminated before",
   "NOT_IN_GUESSING_TURN": "It's not yet the time for guessing"

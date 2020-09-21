@@ -30,8 +30,10 @@ class Status(Enum):
     # UNHAPPY PATH
     INVALID_PLAYER_NUMBER = auto()
     ONGOING_GAME_FOUND = auto()
+    ONGOING_POLL_FOUND = auto()
     PLAYING_USER_FOUND = auto()
     ONGOING_GAME_NOT_FOUND = auto()
+    ONGOING_POLL_NOT_FOUND = auto()
     PLAYER_NOT_FOUND = auto()
     PLAYER_ALREADY_KILLED = auto()
     NOT_IN_GUESSING_TURN = auto()
