@@ -1,8 +1,9 @@
 import random
+from collections import Counter
 from functools import wraps
 
 from undercover import GameState, Role, Status
-from undercover.models import Player, PlayingRole
+from undercover.models import Player, PlayingRole, Poll, Vote
 
 
 def ongoing_game_found(should_be_found):
@@ -19,6 +20,31 @@ def ongoing_game_found(should_be_found):
         return wrapper
 
     return inner
+
+
+def ongoing_poll_found(should_be_found):
+    def inner(func):
+        @wraps(func)
+        def wrapper(room_id, *args, **kwargs):
+            poll = Poll.get(room_id)
+            actual_found = poll is not None
+            if not should_be_found and actual_found:
+                return [GameState(Status.ONGOING_POLL_FOUND)]
+            elif should_be_found and not actual_found:
+                return [GameState(Status.ONGOING_POLL_NOT_FOUND)]
+            return func(room_id, *args, **kwargs)
+
+        return wrapper
+
+    return inner
+
+
+def count_vote(poll_id):
+    votes = Vote.find_all(poll_id=poll_id)
+    tally = Counter()
+    for vote in votes:
+        tally[vote.voted_user_id] += 1
+    return tally, len(votes)
 
 
 # generalize @elimination_valid and its payload to this
@@ -72,8 +98,12 @@ def decide_playing_order(user_ids, mr_whites=None):
 
 
 def clear_game(room_id):
-    Player.delete(room_id)
     PlayingRole.delete(room_id)
+    Player.delete(room_id)
+    poll = Poll.get(room_id)
+    if poll is not None:
+        Poll.delete(poll.poll_id)
+        Vote.delete_all(poll.poll_id)
 
 
 def generate_summary(room_id):
