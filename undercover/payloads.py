@@ -26,6 +26,8 @@ class Status(Enum):
     NON_CIVILIAN_WIN = auto()
     MR_WHITE_WIN = auto()
     SUMMARY = auto()
+    POLL_STARTED = auto()
+    POLL_DECIDED = auto()
 
     # UNHAPPY PATH
     INVALID_PLAYER_NUMBER = auto()
@@ -37,3 +39,6 @@ class Status(Enum):
     PLAYER_NOT_FOUND = auto()
     PLAYER_ALREADY_KILLED = auto()
     NOT_IN_GUESSING_TURN = auto()
+    NO_VOTES_SUBMITTED = auto()
+    NOT_ENOUGH_VOTES = auto()
+    MULTIPLE_PLAYERS_VOTED = auto()
