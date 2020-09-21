@@ -43,7 +43,7 @@ def count_vote(poll_id):
     votes = Vote.find_all(poll_id=poll_id)
     tally = Counter()
     for vote in votes:
-        tally[vote.voted_user_id] += 1
+        tally[vote.voted_id] += 1
     return tally, len(votes)
 
 
