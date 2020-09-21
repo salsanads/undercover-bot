@@ -28,6 +28,8 @@ class Status(Enum):
     SUMMARY = auto()
     POLL_STARTED = auto()
     POLL_DECIDED = auto()
+    VOTE_SUCCESS = auto()
+    TOTAL_VOTES_REACHED = auto()
 
     # UNHAPPY PATH
     INVALID_PLAYER_NUMBER = auto()
@@ -42,3 +44,4 @@ class Status(Enum):
     NO_VOTES_SUBMITTED = auto()
     NOT_ENOUGH_VOTES = auto()
     MULTIPLE_PLAYERS_VOTED = auto()
+    VOTE_EXISTS = auto()
