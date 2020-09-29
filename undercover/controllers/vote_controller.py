@@ -1,4 +1,5 @@
 from collections import Counter
+from functools import wraps
 
 from undercover import GameState, Status
 from undercover.models import Player, Poll, Vote
@@ -10,16 +11,28 @@ from .helpers import (
     player_valid,
 )
 
-
-@player_valid
-def check_vote_valid(room_id, voted_id, voter_id):
-    vote = Vote.get(voter_id)
-    if vote is not None:
-        data = {"player": voter_id}
-        return [GameState(Status.VOTE_EXISTS, data)]
+voted_valid = player_valid
 
 
-def decide_game_states(room_id):
+def voter_valid(func):
+    @player_valid
+    def check_voter_valid(room_id, voter_id):
+        vote = Vote.get(voter_id)
+        if vote is not None:
+            data = {"player": voter_id}
+            return [GameState(Status.VOTE_EXISTS, data)]
+
+    @wraps(func)
+    def wrapper(room_id, voted_id, voter_id, *args, **kwargs):
+        game_states = check_voter_valid(room_id, voter_id)
+        if game_states is not None:
+            return game_states
+        return func(room_id, voted_id, voter_id, *args, **kwargs)
+
+    return wrapper
+
+
+def decide_vote_states(room_id):
     tally, total_votes = count_vote(room_id)
     num_alive_players = Player.num_alive_players(room_id)
     poll = Poll.get(room_id)
@@ -30,13 +43,9 @@ def decide_game_states(room_id):
 
 
 @ongoing_poll_found(True)
-@player_valid
-def vote(room_id, voter_id, voted_id):
-    game_states = check_vote_valid(room_id, voted_id, voter_id)
-    if game_states is not None:
-        return game_states
-
+@voted_valid
+@voter_valid
+def vote(room_id, voted_id, voter_id):
     new_vote = Vote(voter_id, room_id, voted_id)
     Vote.add(new_vote)
-
-    return decide_game_states(room_id)
+    return decide_vote_states(room_id)
