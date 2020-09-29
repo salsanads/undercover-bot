@@ -39,8 +39,8 @@ def ongoing_poll_found(should_be_found):
     return inner
 
 
-def count_vote(poll_id):
-    votes = Vote.find_all(poll_id=poll_id)
+def count_vote(room_id):
+    votes = Vote.find_all(room_id=room_id)
     tally = Counter()
     for vote in votes:
         tally[vote.voted_id] += 1
@@ -98,12 +98,10 @@ def decide_playing_order(user_ids, mr_whites=None):
 
 
 def clear_game(room_id):
-    PlayingRole.delete(room_id)
     Player.delete(room_id)
-    poll = Poll.get(room_id)
-    if poll is not None:
-        Poll.delete(poll.poll_id)
-        Vote.delete_all(poll.poll_id)
+    PlayingRole.delete(room_id)
+    Vote.delete_all(room_id)
+    Poll.delete(room_id)
 
 
 def generate_summary(room_id):

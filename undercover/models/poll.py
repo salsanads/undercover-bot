@@ -7,20 +7,18 @@ from .database import Base, add_session
 class Poll(Base):
     __tablename__ = "poll"
 
-    poll_id = Column(BigInteger, nullable=False, primary_key=True)
-    room_id = Column(BigInteger, nullable=False, unique=True)
-    total_players = Column(BigInteger, nullable=False)
+    room_id = Column(BigInteger, nullable=False, primary_key=True)
+    msg_id = Column(BigInteger, nullable=False, unique=True)
     votes = relationship("Vote", backref="poll", cascade="all,delete-orphan")
 
-    def __init__(self, poll_id, room_id, total_players=0):
-        self.poll_id = poll_id
+    def __init__(self, room_id, msg_id):
         self.room_id = room_id
-        self.total_players = total_players
+        self.msg_id = msg_id
 
     @classmethod
     @add_session(expire_on_commit=False)
     def get(cls, room_id, session):
-        poll = session.query(cls).filter_by(room_id=room_id).first()
+        poll = session.query(cls).get(room_id)
         return poll
 
     @classmethod
@@ -30,5 +28,5 @@ class Poll(Base):
 
     @classmethod
     @add_session
-    def delete(cls, poll_id, session):
-        session.query(cls).filter_by(poll_id=poll_id).delete()
+    def delete(cls, room_id, session):
+        session.query(cls).filter_by(room_id=room_id).delete()
