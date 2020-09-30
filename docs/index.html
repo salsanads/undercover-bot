@@ -1,0 +1,267 @@
+<html>
+<head>
+  <title>Undercover | A Discord bot inspired from the Undercover ^^ game</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="Play Undercover with your friends in Discord!">
+  <meta name="keywords" content="Undercover, Discord, bot, game">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#333333">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="assets/site.webmanifest">
+
+  <meta property="og:site_name" content="Undercover">
+  <meta property="og:title" content="Undercover | A Discord bot inspired from the Undercover ^^ game">
+  <meta property="og:description" content="Play Undercover with your friends in Discord!">
+  <meta property="og:image" content="https://user-images.githubusercontent.com/9564160/94440000-4f93b080-01cb-11eb-92e7-7bd47b1098c7.png">
+  <meta property="og:url" content="https://salsanads.github.io/undercover-bot/">
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <link href="assets/css/fontawesome.min.css" rel="stylesheet">
+  <link href="assets/css/brands.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Lato', sans-serif;
+    }
+
+    a {
+      transition: color .15s ease-in-out;
+    }
+
+    .btn {
+      padding: .6rem 1rem;
+      border-radius: 40px;
+    }
+
+    .btn-lg {
+      padding: .8rem 2rem;
+      font-weight: bold;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+
+      background-color: #333;
+      min-height: 100vh;
+    }
+
+    .header-icon {
+      width: 100%;
+    }
+
+    .header-title {
+      margin-bottom: 25px;
+      color: #fff;
+      font-size: 64px;
+    }
+
+    .header-subtitle {
+      margin-bottom: 40px;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .header-subtitle a {
+      color: #aaa;
+    }
+
+    @media (max-width: 575.98px) {
+      .header-title {
+        font-size: 48px;
+      }
+
+      .header-subtitle {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .header-cta {
+        margin-bottom: 120px;
+      }
+    }
+
+    .section {
+      padding: 75px 0;
+    }
+
+    .section-title {
+      font-size: 40px;
+      margin-bottom: 40px;
+    }
+
+    .section-commands {
+      background-color: #212121;
+    }
+
+    .section-commands .section-title {
+      color: #aaa;
+    }
+
+    .command-item {
+      margin: 25px 0;
+      padding: 15px 20px 20px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .command-item-name {
+      font-size: 24px;
+    }
+
+    .comamand-item-footer {
+      margin: 8px 0 3px;
+    }
+
+    .footer {
+      padding: 30px 0;
+      background-color: #333;
+    }
+
+    .footer,
+    .footer a {
+      color: #fff;
+    }
+
+    .footer a:hover {
+      color: #aaa;
+    }
+
+    .footer-icon-list {
+      font-size: 32px;
+    }
+
+    .footer-subtitle a {
+      color: #aaa;
+    }
+
+    .footer-cta {
+      font-weight: bold;
+    }
+
+    @media (max-width: 991.98px) {
+      .footer-icon-list {
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <img class="header-icon" src="https://user-images.githubusercontent.com/9564160/94440000-4f93b080-01cb-11eb-92e7-7bd47b1098c7.png">
+        </div>
+        <div class="col-lg-5 d-flex align-items-center">
+          <div>
+            <h1 class="header-title">Undercover</h1>
+            <h3 class="header-subtitle">
+              A Discord bot inspired from the <a href="https://www.producthunt.com/posts/undercover-2">Undercover ^^</a> game.
+            </h3>
+            <a class="header-cta btn btn-info btn-lg shadow-lg" href="https://discord.com/api/oauth2/authorize?client_id=733173616320970832&permissions=2048&scope=bot">
+              Add to Discord
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section section-commands">
+    <div class="container">
+      <div class="row">
+        <div class="offset-lg-2 col-lg-8">
+          <div class="text-center">
+            <h2 class="section-title">Commands</h2>
+          </div>
+          <div class="command-list">
+            
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!start</strong> [username 1] [username 2] ... [username n]</div>
+              <div class="command-item-desc">Plays the game with all of the mentioned usernames.</div>
+              <div class="comamand-item-footer"><span class="badge badge-pill badge-warning">Channel only</span></div>
+            </div>
+            
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!poll</strong></div>
+              <div class="command-item-desc">Helds a poll to vote who will be eliminated in the current turn.</div>
+              <div class="comamand-item-footer"><span class="badge badge-pill badge-warning">Channel only</span></div>
+            </div>
+            
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!vote</strong> [username]</div>
+              <div class="command-item-desc">Votes the mentioned username to be eliminated in the current ongoing poll.</div>
+              <div class="comamand-item-footer"><span class="badge badge-pill badge-warning">Channel only</span></div>
+            </div>
+
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!guess</strong> [word]</div>
+              <div class="command-item-desc">Guesses the civillian's word by Mr. White right after being eliminated.</div>
+              <div class="comamand-item-footer"><span class="badge badge-pill badge-light">DM only</span></div>
+            </div>
+
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!help</strong></div>
+              <div class="command-item-desc">Displays list of available commands.</div>
+            </div>
+            
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!howto</strong></div>
+              <div class="command-item-desc">Displays how to play the game guide.</div>
+            </div>
+
+            <div class="command-item shadow-lg rounded">
+              <div class="command-item-name"><strong>!clear</strong></div>
+              <div class="command-item-desc">Clears any ongoing game in the current channel.</div>
+              <div class="comamand-item-footer"><span class="badge badge-pill badge-warning">Channel only</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="d-lg-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="footer-title">Undercover</h2>
+          <p class="footer-subtitle">
+            A Discord bot inspired from the <a href="https://www.producthunt.com/posts/undercover-2">Undercover ^^</a> game.
+          </p>
+          <div class="footer-icon-list">
+            <a href="https://github.com/salsanads/undercover-bot">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <a class="footer-cta btn btn-info shadow-lg" href="https://discord.com/api/oauth2/authorize?client_id=733173616320970832&permissions=2048&scope=bot">
+            Add to Discord
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
