@@ -1,6 +1,9 @@
 import pytest
 
-from undercover.controllers.eliminate_controller import eliminate, kill_player
+from undercover.controllers.eliminate_controller import (
+    eliminate_player,
+    kill_player,
+)
 from undercover.models import Player, PlayingRole
 from undercover.payloads import Role, Status
 
@@ -58,7 +61,7 @@ class TestEliminateController:
         for user_id in already_killed_user_ids:
             kill_player(user_id)
 
-        game_states = eliminate(room_id, eliminated_user_id)
+        game_states = eliminate_player(room_id, eliminated_user_id)
 
         if (
             expected_status == Status.CIVILIAN_WIN
@@ -98,7 +101,7 @@ class TestEliminateController:
         Player.insert(Player(5, 2, Role.MR_WHITE.name))
         kill_player(2)
 
-        game_states = eliminate(room_id, user_id)
+        game_states = eliminate_player(room_id, user_id)
         assert len(game_states) == 1
 
         game_state = game_states[0]

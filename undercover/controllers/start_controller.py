@@ -59,7 +59,7 @@ def playing_users_not_found(func):
 @ongoing_game_found(False)
 @num_players_valid
 @playing_users_not_found
-def start(room_id, user_ids):
+def start_game(room_id, user_ids):
     role_proportion = ROLE_PROPORTIONS[len(user_ids)]
     num_civilians, num_undercovers, num_mr_whites = role_proportion
     civilian_word, undercover_word = get_secret_word()

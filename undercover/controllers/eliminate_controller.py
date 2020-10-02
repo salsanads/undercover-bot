@@ -16,7 +16,7 @@ def kill_player(user_id):
 
 @ongoing_game_found(True)
 @player_valid
-def eliminate(room_id, user_id):
+def eliminate_player(room_id, user_id):
     kill_player(user_id)
     killed_player = Player.get(user_id)
     data = {"player": killed_player.user_id, "role": killed_player.role}

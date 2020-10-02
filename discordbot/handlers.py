@@ -51,7 +51,7 @@ async def handle_how_to(ctx):
 async def handle_start(ctx):
     """Starts the game"""
     user_ids = retrieve_player_ids(ctx)
-    game_states = controllers.start(ctx.channel.id, user_ids)
+    game_states = controllers.start_game(ctx.channel.id, user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
             await send_mention_message(ctx, game_state, "playing_users")
@@ -69,7 +69,7 @@ async def handle_start(ctx):
 @guild_only()
 async def handle_eliminate(ctx):
     """Eliminates own self"""
-    game_states = controllers.eliminate(ctx.channel.id, ctx.author.id)
+    game_states = controllers.eliminate_player(ctx.channel.id, ctx.author.id)
     user = bot.get_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
@@ -99,7 +99,7 @@ async def handle_guess(ctx):
     """Guesses Civilian's word"""
     user_id = ctx.message.author.id
     word = " ".join(ctx.message.content.split(" ")[1:])
-    game_states = controllers.guess(user_id, word)
+    game_states = controllers.guess_word(user_id, word)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             channel = bot.get_channel(game_state.room_id)

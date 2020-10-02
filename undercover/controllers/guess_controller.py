@@ -8,7 +8,7 @@ from undercover.models import Player, PlayingRole
 from .helpers import clear_game, evaluate_game
 
 
-def guess(user_id, word):
+def guess_word(user_id, word):
     player = Player.get(user_id)
     if player is None or not player.guessing:
         return [GameState(Status.NOT_IN_GUESSING_TURN)]

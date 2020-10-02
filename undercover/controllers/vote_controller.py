@@ -29,7 +29,7 @@ def voter_valid(func):
 @ongoing_poll_found(True)
 @voted_valid
 @voter_valid
-def vote(room_id, voted_id, voter_id):
+def vote_player(room_id, voted_id, voter_id):
     new_vote = Vote(voter_id, room_id, voted_id)
     Vote.add(new_vote)
     return decide_vote_states(room_id)
