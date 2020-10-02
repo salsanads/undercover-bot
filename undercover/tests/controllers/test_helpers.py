@@ -10,32 +10,30 @@ class TestEvaluateGame:
     @staticmethod
     @pytest.fixture(autouse=True)
     def populate_db():
+        PlayingRole.insert(PlayingRole(1, Role.CIVILIAN.name, "civilian_word"))
         PlayingRole.insert(
-            PlayingRole("1", Role.CIVILIAN.name, "civilian_word")
+            PlayingRole(1, Role.UNDERCOVER.name, "undercover_word")
         )
-        PlayingRole.insert(
-            PlayingRole("1", Role.UNDERCOVER.name, "undercover_word")
-        )
-        PlayingRole.insert(PlayingRole("1", Role.MR_WHITE.name))
-        Player.insert(Player("1", "1", Role.CIVILIAN.name))
-        Player.insert(Player("2", "1", Role.CIVILIAN.name))
-        Player.insert(Player("3", "1", Role.UNDERCOVER.name))
-        Player.insert(Player("4", "1", Role.MR_WHITE.name))
+        PlayingRole.insert(PlayingRole(1, Role.MR_WHITE.name))
+        Player.insert(Player(1, 1, Role.CIVILIAN.name))
+        Player.insert(Player(2, 1, Role.CIVILIAN.name))
+        Player.insert(Player(3, 1, Role.UNDERCOVER.name))
+        Player.insert(Player(4, 1, Role.MR_WHITE.name))
         yield
-        PlayingRole.delete("1")
-        Player.delete("1")
+        PlayingRole.delete(1)
+        Player.delete(1)
 
     @staticmethod
     @pytest.mark.parametrize(
         "killed_user_ids, expected_status",
         [
-            (["1"], Status.NON_CIVILIAN_WIN),
-            (["3"], Status.PLAYING_ORDER),
-            (["4", "3"], Status.CIVILIAN_WIN),
+            ([1], Status.NON_CIVILIAN_WIN),
+            ([3], Status.PLAYING_ORDER),
+            ([4, 3], Status.CIVILIAN_WIN),
         ],
     )
     def test_evaluate_game(killed_user_ids, expected_status, session):
-        room_id = "1"
+        room_id = 1
         for user_id in killed_user_ids:
             kill_player(user_id)
 

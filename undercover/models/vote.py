@@ -7,16 +7,16 @@ class Vote(Base):
     __tablename__ = "vote"
 
     voter_id = Column(BigInteger, primary_key=True, nullable=False)
-    poll_id = Column(
+    room_id = Column(
         BigInteger,
-        ForeignKey("poll.poll_id", onupdate="CASCADE", ondelete="CASCADE"),
+        ForeignKey("poll.room_id", onupdate="CASCADE", ondelete="CASCADE"),
         index=True,
     )
     voted_id = Column(BigInteger, nullable=False)
 
-    def __init__(self, voter_id, poll_id, voted_id):
+    def __init__(self, voter_id, room_id, voted_id):
         self.voter_id = voter_id
-        self.poll_id = poll_id
+        self.room_id = room_id
         self.voted_id = voted_id
 
     @classmethod
@@ -51,8 +51,8 @@ class Vote(Base):
 
     @classmethod
     @add_session
-    def delete_all(cls, poll_id, session):
-        session.query(cls).filter_by(poll_id=poll_id).delete()
+    def delete_all(cls, room_id, session):
+        session.query(cls).filter_by(room_id=room_id).delete()
 
     @classmethod
     @add_session

@@ -75,8 +75,8 @@ async def handle_eliminate(ctx):
         if game_state.status == Status.PLAYING_ORDER:
             await send_mention_message(ctx, game_state, "playing_order")
         elif (
-            game_state.status == Status.ELIMINATED_PLAYER_NOT_FOUND
-            or game_state.status == Status.ELIMINATED_PLAYER_ALREADY_KILLED
+            game_state.status == Status.PLAYER_NOT_FOUND
+            or game_state.status == Status.PLAYER_ALREADY_KILLED
             or game_state.status == Status.CIVILIAN_ELIMINATED
             or game_state.status == Status.UNDERCOVER_ELIMINATED
             or game_state.status == Status.MR_WHITE_ELIMINATED

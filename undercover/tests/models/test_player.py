@@ -8,10 +8,10 @@ class TestPlayer:
     @staticmethod
     @pytest.fixture(autouse=True)
     def populate_db(session):
-        session.add(PlayingRole("1", Role.CIVILIAN.name, "civilian_word"))
-        session.add(PlayingRole("1", Role.UNDERCOVER.name, "undercover_word"))
-        session.add(PlayingRole("1", Role.MR_WHITE.name))
-        session.add(PlayingRole("2", Role.CIVILIAN.name, "civilian_word"))
+        session.add(PlayingRole(1, Role.CIVILIAN.name, "civilian_word"))
+        session.add(PlayingRole(1, Role.UNDERCOVER.name, "undercover_word"))
+        session.add(PlayingRole(1, Role.MR_WHITE.name))
+        session.add(PlayingRole(2, Role.CIVILIAN.name, "civilian_word"))
         session.commit()
         yield
         session.query(PlayingRole).delete()
@@ -19,16 +19,16 @@ class TestPlayer:
 
     @staticmethod
     def test_insert_player(session):
-        playing_role = PlayingRole("1", Role.CIVILIAN.name, "civilian_word")
+        playing_role = PlayingRole(1, Role.CIVILIAN.name, "civilian_word")
         civilian = Player(
-            user_id="1", room_id=playing_role.room_id, role=playing_role.role,
+            user_id=1, room_id=playing_role.room_id, role=playing_role.role,
         )
         Player.insert(civilian)
-        players = session.query(Player).filter_by(user_id="1").all()
+        players = session.query(Player).filter_by(user_id=1).all()
 
         assert len(players) == 1
         player = players[0]
-        assert player.user_id == "1"
+        assert player.user_id == 1
         assert player.alive
         assert not player.guessing
         assert player.role == playing_role.role
@@ -37,26 +37,26 @@ class TestPlayer:
 
     @staticmethod
     def test_insert_duplicate_player():
-        civilian = Player(user_id="1", room_id="1", role=Role.CIVILIAN.name,)
+        civilian = Player(user_id=1, room_id=1, role=Role.CIVILIAN.name,)
         Player.insert(civilian)
         with pytest.raises(Exception):
             undercover = Player(
-                user_id="1", room_id="2", role=Role.UNDERCOVER.name,
+                user_id=1, room_id=2, role=Role.UNDERCOVER.name,
             )
             Player.insert(undercover)
 
     @staticmethod
     def test_delete(session):
-        user_ids = ["1", "2", "3"]
-        room_ids = ["1", "1", "2"]
+        user_ids = [1, 2, 3]
+        room_ids = [1, 1, 2]
         for user_id, room_id in zip(user_ids, room_ids):
             player = Player(
                 user_id=user_id, room_id=room_id, role=Role.CIVILIAN.name
             )
             Player.insert(player)
 
-        to_be_deleted_room_id = "1"
-        intact_room_id = "2"
+        to_be_deleted_room_id = 1
+        intact_room_id = 2
         Player.delete(to_be_deleted_room_id)
 
         should_be_none = (
@@ -72,8 +72,8 @@ class TestPlayer:
 
     @staticmethod
     def test_num_alive_players():
-        room_id = "1"
-        user_ids = ["1", "2", "3", "4"]
+        room_id = 1
+        user_ids = [1, 2, 3, 4]
         status = [True, True, False, True]
         roles = [
             Role.CIVILIAN.name,
@@ -105,8 +105,8 @@ class TestPlayer:
 
     @staticmethod
     def test_alive_player_ids():
-        room_id = "1"
-        user_ids = ["1", "2", "3", "4"]
+        room_id = 1
+        user_ids = [1, 2, 3, 4]
         status = [True, True, False, True]
         roles = [
             Role.CIVILIAN.name,
@@ -131,15 +131,15 @@ class TestPlayer:
             room_id, role=Role.MR_WHITE.name
         )
 
-        assert alive_players_ids == ["1", "2", "4"]
-        assert alive_civilians_ids == ["1", "2"]
-        assert alive_undercover_ids == ["4"]
+        assert alive_players_ids == [1, 2, 4]
+        assert alive_civilians_ids == [1, 2]
+        assert alive_undercover_ids == [4]
         assert alive_mr_white_ids == []
 
     @staticmethod
     def test_get():
-        user_id = "1"
-        room_id = "1"
+        user_id = 1
+        room_id = 1
         Player.insert(Player(user_id, room_id, Role.CIVILIAN.name))
         player = Player.get(user_id)
 
@@ -153,16 +153,16 @@ class TestPlayer:
     @staticmethod
     def test_get_non_existing_player():
         # no players added previously in `populate_db()`
-        user_id = "1"
+        user_id = 1
         assert Player.get(user_id) is None
 
     @staticmethod
     def test_update():
-        user_id = "1"
-        player = Player(user_id=user_id, room_id="1", role=Role.CIVILIAN.name)
+        user_id = 1
+        player = Player(user_id=user_id, room_id=1, role=Role.CIVILIAN.name)
         Player.insert(player)
 
-        updated_room_id = "2"
+        updated_room_id = 2
         updated_role = Role.MR_WHITE.name
         updated_alive = False
         updated_guessing = True
@@ -183,6 +183,6 @@ class TestPlayer:
     @staticmethod
     def test_update_non_existing_player():
         # no players added previously in `populate_db()`
-        user_id = "1"
+        user_id = 1
         with pytest.raises(Exception):
             Player.update(user_id, alive=False)

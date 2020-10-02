@@ -3,24 +3,7 @@ from functools import wraps
 from undercover import GameState, Role, Status
 from undercover.models import Player
 
-from .helpers import evaluate_game, ongoing_game_found
-
-
-def elimination_valid(func):
-    @wraps(func)
-    def wrapper(room_id, user_id, *args, **kwargs):
-        player = Player.get(user_id)
-        data = {"player": user_id}
-
-        if player is None or player.room_id != room_id:
-            return [GameState(Status.ELIMINATED_PLAYER_NOT_FOUND, data)]
-
-        if not player.alive:
-            return [GameState(Status.ELIMINATED_PLAYER_ALREADY_KILLED, data)]
-
-        return func(room_id, user_id, *args, **kwargs)
-
-    return wrapper
+from .helpers import evaluate_game, ongoing_game_found, player_valid
 
 
 def kill_player(user_id):
@@ -32,7 +15,7 @@ def kill_player(user_id):
 
 
 @ongoing_game_found(True)
-@elimination_valid
+@player_valid
 def eliminate(room_id, user_id):
     kill_player(user_id)
     killed_player = Player.get(user_id)
