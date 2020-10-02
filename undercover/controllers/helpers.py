@@ -47,7 +47,6 @@ def count_vote(room_id):
     return tally, len(votes)
 
 
-# generalize @elimination_valid and its payload to this
 def player_valid(func):
     @wraps(func)
     def wrapper(room_id, user_id, *args, **kwargs):
