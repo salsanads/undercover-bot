@@ -15,6 +15,8 @@
   "GUILD_ONLY_COMMAND": "You must run this command in a server",
   "DM_ONLY_COMMAND": "You can only run this command from private message",
   "HUMAN_PLAYER_ONLY": "Sorry, bots are not allowed to join the game",
+  "NO_MULTIPLE_VOTES": "Sorry, you can only vote one player",
+  "SPECIFY_USER": "Please specify the user you want to apply the command to",
   "INVALID_PLAYER_NUMBER": "The number of players should be {min_player} up to {max_player}",
   "ONGOING_GAME_FOUND": "There's an ongoing game in this server, finish it first",
   "ONGOING_POLL_FOUND": "There's an ongoing poll in this channel, wait it to finish first",
@@ -25,7 +27,7 @@
   "PLAYER_ALREADY_KILLED": "Command failed: {player} has been eliminated before",
   "NOT_IN_GUESSING_TURN": "It's not yet the time for guessing",
   "NO_VOTES_SUBMITTED": "No votes submitted. No players will be eliminated",
-  "NOT_ENOUGH_VOTES": "Less than half players voted. No players will be eliminated",
+  "NOT_ENOUGH_VOTES": "No more than half players voted. No players will be eliminated",
   "MULTIPLE_PLAYERS_VOTED": "Multiple players voted. No players will be eliminated",
   "VOTE_EXISTS": "{player} has voted before. You can only vote once"
 }

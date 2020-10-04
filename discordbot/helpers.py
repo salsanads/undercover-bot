@@ -10,6 +10,8 @@ class CommandStatus(Enum):
     GUILD_ONLY_COMMAND = auto()
     HOW_TO = auto()
     HUMAN_PLAYER_ONLY = auto()
+    NO_MULTIPLE_VOTES = auto()
+    SPECIFY_USER = auto()
 
 
 def generate_message(key, params=None):

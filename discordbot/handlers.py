@@ -1,4 +1,5 @@
 import asyncio
+import os
 import traceback
 
 from discord import Activity, ActivityType
@@ -13,11 +14,17 @@ from .helpers import CommandStatus, generate_mention, generate_message
 
 bot = Bot(command_prefix="!")
 SHOW_PLAYED_WORDS_DURATION = 5  # seconds
+COGS = []
+for filename in os.listdir("./discordbot/cogs/"):
+    if filename.endswith("_cog.py"):
+        COGS.append(filename[:-3])
 
 
 @bot.event
 async def on_ready():
     print(f"{bot.user.name} has connected to Discord!")
+    for cog in COGS:
+        bot.load_extension(f"discordbot.cogs.{cog}")
     await bot.change_presence(
         activity=Activity(type=ActivityType.listening, name="!help")
     )
@@ -130,8 +137,10 @@ async def send_how_to_message(ctx):
     await ctx.send(reply)
 
 
-def retrieve_player_ids(ctx):
-    user_ids = {ctx.author.id}
+def retrieve_player_ids(ctx, include_author=True):
+    user_ids = set()
+    if include_author:
+        user_ids.add(ctx.author.id)
     for user in ctx.message.mentions:
         if user.bot:
             raise BotPlayerFound
