@@ -1,13 +1,12 @@
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import wraps
 
 from discord import Colour, Embed
-from discord.ext.commands import Cog, command, errors, guild_only
+from discord.ext.commands import Cog, command, guild_only
 
-from discordbot.errors import EmptyUserArgumentFound, MultipleVotesFound
-from discordbot.handlers import retrieve_player_ids, send_mention_message
-from discordbot.helpers import CommandStatus, generate_message
+from discordbot.handlers import send_mention_message
+from discordbot.helpers import generate_message
 from undercover import Status, controllers
 
 POLLING_DURATION_IN_SECONDS = 30
