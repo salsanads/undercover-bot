@@ -1,6 +1,8 @@
 import json
 from enum import Enum, auto
 
+from .errors import BotPlayerFound
+
 messages_file = open("messages.json", "r")
 messages = json.load(messages_file)
 
@@ -8,10 +10,13 @@ messages = json.load(messages_file)
 class CommandStatus(Enum):
     DM_ONLY_COMMAND = auto()
     GUILD_ONLY_COMMAND = auto()
-    HOW_TO = auto()
-    HUMAN_PLAYER_ONLY = auto()
-    NO_MULTIPLE_VOTES = auto()
-    SPECIFY_USER = auto()
+
+    HOW_TO_COMMAND = auto()
+
+    BOT_PLAYER_FOUND = auto()
+
+    EMPTY_VOTE_FOUND = auto()
+    MULTIPLE_VOTES_FOUND = auto()
 
 
 def generate_message(key, params=None):
@@ -36,3 +41,27 @@ def generate_mention(user_id=None, user_ids=None, style="{mention}"):
         mentions.append(generate_mention(user_id=user_id, style=style))
     one_line_mentions = " ".join(mentions)
     return one_line_mentions
+
+
+def retrieve_player_ids(ctx, include_author=True):
+    user_ids = set()
+    if include_author:
+        user_ids.add(ctx.author.id)
+    for user in ctx.message.mentions:
+        if user.bot:
+            raise BotPlayerFound
+        user_ids.add(user.id)
+    return list(user_ids)
+
+
+async def send_mention_message(recipient, game_state, user_id_key):
+    if type(game_state.data[user_id_key]) == list:
+        game_state.data[user_id_key] = generate_mention(
+            user_ids=game_state.data[user_id_key]
+        )
+    else:
+        game_state.data[user_id_key] = generate_mention(
+            user_id=game_state.data[user_id_key]
+        )
+    message = generate_message(game_state.status.name, game_state.data)
+    return await recipient.send(message)

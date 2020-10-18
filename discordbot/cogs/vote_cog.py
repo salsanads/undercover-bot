@@ -1,12 +1,15 @@
-import asyncio
 from datetime import datetime
 
 from discord import Colour, Embed
 from discord.ext.commands import Cog, command, errors, guild_only
 
-from discordbot.errors import EmptyUserArgumentFound, MultipleVotesFound
-from discordbot.handlers import retrieve_player_ids, send_mention_message
-from discordbot.helpers import CommandStatus, generate_message
+from discordbot.errors import EmptyVoteFound, MultipleVotesFound
+from discordbot.helpers import (
+    CommandStatus,
+    generate_message,
+    retrieve_player_ids,
+    send_mention_message,
+)
 from undercover import Status, controllers
 
 EMBED_COLOR = Colour.blue()
@@ -39,7 +42,7 @@ class VoteHandler:
         if len(voted_ids) > 1:
             raise MultipleVotesFound
         elif len(voted_ids) == 0:
-            raise EmptyUserArgumentFound
+            raise EmptyVoteFound
         return True
 
     def get_handler(self):
@@ -104,11 +107,11 @@ class Vote(Cog):
         if isinstance(error, errors.CommandInvokeError):
             if isinstance(error.original, MultipleVotesFound):
                 await ctx.send(
-                    generate_message(CommandStatus.NO_MULTIPLE_VOTES.name)
+                    generate_message(CommandStatus.MULTIPLE_VOTES_FOUND.name)
                 )
-            if isinstance(error.original, EmptyUserArgumentFound):
+            if isinstance(error.original, EmptyVoteFound):
                 await ctx.send(
-                    generate_message(CommandStatus.SPECIFY_USER.name)
+                    generate_message(CommandStatus.EMPTY_VOTE_FOUND.name)
                 )
 
     @command(name="vote")

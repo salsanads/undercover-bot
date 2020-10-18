@@ -10,7 +10,13 @@ from undercover import Status, controllers, models
 from undercover.controllers.helpers import clear_game
 
 from .errors import BotPlayerFound
-from .helpers import CommandStatus, generate_mention, generate_message
+from .helpers import (
+    CommandStatus,
+    generate_mention,
+    generate_message,
+    retrieve_player_ids,
+    send_mention_message,
+)
 
 bot = Bot(command_prefix="!")
 SHOW_PLAYED_WORDS_DURATION = 5  # seconds
@@ -37,7 +43,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
             await ctx.send(
-                generate_message(CommandStatus.HUMAN_PLAYER_ONLY.name)
+                generate_message(CommandStatus.BOT_PLAYER_FOUND.name)
             )
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
@@ -133,19 +139,8 @@ async def handle_clear(ctx):
 
 
 async def send_how_to_message(ctx):
-    reply = generate_message(CommandStatus.HOW_TO.name)
+    reply = generate_message(CommandStatus.HOW_TO_COMMAND.name)
     await ctx.send(reply)
-
-
-def retrieve_player_ids(ctx, include_author=True):
-    user_ids = set()
-    if include_author:
-        user_ids.add(ctx.author.id)
-    for user in ctx.message.mentions:
-        if user.bot:
-            raise BotPlayerFound
-        user_ids.add(user.id)
-    return list(user_ids)
 
 
 async def send_user_word_messages(game_state, channel_id):
@@ -159,19 +154,6 @@ async def send_user_word_messages(game_state, channel_id):
             models.WordMessage(message.id, user.id, channel_id)
         )
     models.WordMessage.insert_all(word_messages)
-
-
-async def send_mention_message(recipient, game_state, user_id_key):
-    if type(game_state.data[user_id_key]) == list:
-        game_state.data[user_id_key] = generate_mention(
-            user_ids=game_state.data[user_id_key]
-        )
-    else:
-        game_state.data[user_id_key] = generate_mention(
-            user_id=game_state.data[user_id_key]
-        )
-    message = generate_message(game_state.status.name, game_state.data)
-    return await recipient.send(message)
 
 
 async def send_summary_message(ctx, game_state):

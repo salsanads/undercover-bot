@@ -5,8 +5,7 @@ from functools import wraps
 from discord import Colour, Embed
 from discord.ext.commands import Cog, command, guild_only
 
-from discordbot.handlers import send_mention_message
-from discordbot.helpers import generate_message
+from discordbot.helpers import generate_message, send_mention_message
 from undercover import Status, controllers
 
 POLLING_DURATION_IN_SECONDS = 30
