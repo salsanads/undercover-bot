@@ -12,6 +12,8 @@ from discordbot.helpers import (
 )
 from undercover import Status, controllers
 
+from .helpers import register_cog
+
 EMBED_COLOR = Colour.blue()
 
 
@@ -94,6 +96,7 @@ class VoteHandler:
         )
 
 
+@register_cog
 class Vote(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -119,7 +122,3 @@ class Vote(Cog):
     async def handle_vote(self, ctx):
         vote_handler = VoteHandler(ctx)
         await vote_handler.respond()
-
-
-def setup(bot):
-    bot.add_cog(Vote(bot))

@@ -8,6 +8,8 @@ from discord.ext.commands import Cog, command, guild_only
 from discordbot.helpers import generate_message, send_mention_message
 from undercover import Status, controllers
 
+from .helpers import register_cog
+
 POLLING_DURATION_IN_SECONDS = 30
 EMBED_COLOR = Colour.blue()
 
@@ -183,6 +185,7 @@ class PollService:
         )
 
 
+@register_cog
 class Poll(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -197,7 +200,3 @@ class Poll(Cog):
         poll = PollService(self, ctx)
         await poll.start()
         await poll.complete()
-
-
-def setup(bot):
-    bot.add_cog(Poll(bot))

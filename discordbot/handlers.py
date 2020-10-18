@@ -1,11 +1,11 @@
 import asyncio
-import os
 import traceback
 
 from discord import Activity, ActivityType
 from discord.ext import commands
-from discord.ext.commands import Bot, dm_only, guild_only
+from discord.ext.commands import dm_only, guild_only
 
+from discordbot import bot
 from undercover import Status, controllers, models
 from undercover.controllers.helpers import clear_game
 
@@ -18,19 +18,12 @@ from .helpers import (
     send_mention_message,
 )
 
-bot = Bot(command_prefix="!")
 SHOW_PLAYED_WORDS_DURATION = 5  # seconds
-COGS = []
-for filename in os.listdir("./discordbot/cogs/"):
-    if filename.endswith("_cog.py"):
-        COGS.append(filename[:-3])
 
 
 @bot.event
 async def on_ready():
     print(f"{bot.user.name} has connected to Discord!")
-    for cog in COGS:
-        bot.load_extension(f"discordbot.cogs.{cog}")
     await bot.change_presence(
         activity=Activity(type=ActivityType.listening, name="!help")
     )
@@ -40,6 +33,8 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
         await ctx.send(generate_message(CommandStatus.GUILD_ONLY_COMMAND.name))
+    elif isinstance(error, commands.errors.PrivateMessageOnly):
+        await ctx.send(generate_message(CommandStatus.DM_ONLY_COMMAND.name))
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
             await ctx.send(
@@ -47,8 +42,6 @@ async def on_command_error(ctx, error):
             )
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
-    elif isinstance(error, commands.errors.PrivateMessageOnly):
-        await ctx.send(generate_message(CommandStatus.DM_ONLY_COMMAND.name))
     else:
         traceback.print_exception(type(error), error, error.__traceback__)
 

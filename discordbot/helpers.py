@@ -19,13 +19,6 @@ class CommandStatus(Enum):
     MULTIPLE_VOTES_FOUND = auto()
 
 
-def generate_message(key, params=None):
-    message = messages[key]
-    if params is not None:
-        message = message.format(**params)
-    return message
-
-
 def generate_mention(user_id=None, user_ids=None, style="{mention}"):
     if user_id is None and user_ids is None:
         raise ValueError("Cannot have both user_id and user_ids None")
@@ -41,6 +34,13 @@ def generate_mention(user_id=None, user_ids=None, style="{mention}"):
         mentions.append(generate_mention(user_id=user_id, style=style))
     one_line_mentions = " ".join(mentions)
     return one_line_mentions
+
+
+def generate_message(key, params=None):
+    message = messages[key]
+    if params is not None:
+        message = message.format(**params)
+    return message
 
 
 def retrieve_player_ids(ctx, include_author=True):
