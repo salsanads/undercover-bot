@@ -10,7 +10,7 @@ voted_valid = player_valid
 
 def voter_valid(func):
     @player_valid
-    def check_voter_valid(room_id, voter_id):
+    def check_voter_valid(room_id, voter_id):  # room_id used inside decorator
         vote = Vote.get(voter_id)
         if vote is not None:
             data = {"player": voter_id}
