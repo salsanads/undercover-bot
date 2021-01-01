@@ -5,7 +5,7 @@ from discord.ext.commands import Cog, command, errors, guild_only
 
 from discordbot.errors import EmptyVoteFound, MultipleVotesFound
 from discordbot.helpers import (
-    MessageStatus,
+    MessageKey,
     generate_message,
     retrieve_player_ids,
     send_message,
@@ -26,12 +26,10 @@ class Vote(Cog):
         if isinstance(error, errors.CommandInvokeError):
             if isinstance(error.original, MultipleVotesFound):
                 await ctx.send(
-                    generate_message(MessageStatus.MULTIPLE_VOTES_FOUND)
+                    generate_message(MessageKey.MULTIPLE_VOTES_FOUND)
                 )
             if isinstance(error.original, EmptyVoteFound):
-                await ctx.send(
-                    generate_message(MessageStatus.EMPTY_VOTE_FOUND)
-                )
+                await ctx.send(generate_message(MessageKey.EMPTY_VOTE_FOUND))
 
     @command(name="vote")
     @guild_only()
@@ -105,10 +103,10 @@ class VoteHandler:
     def generate_status_embed(game_state):
         tally = game_state.data["tally"]
         voted_player_info = generate_message(
-            MessageStatus.POLL_STATUS_VOTED_PLAYER_INFO
+            MessageKey.POLL_STATUS_VOTED_PLAYER_INFO
         )
         return Embed(
-            title=generate_message(MessageStatus.POLL_STATUS_TITLE),
+            title=generate_message(MessageKey.POLL_STATUS_TITLE),
             description="\n".join(
                 [
                     voted_player_info.format(user=user, votes=votes)

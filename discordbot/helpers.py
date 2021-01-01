@@ -8,9 +8,12 @@ messages_file = open("messages.yaml", "r")
 messages = yaml.load(messages_file, Loader=yaml.BaseLoader)
 
 
-class MessageStatus(Enum):
+class MessageKey(Enum):
     # how to message
-    HOW_TO_COMMAND = auto()
+    HOW_TO_TITLE = auto()
+    HOW_TO_CONTENT = auto()
+    WIN_CONDITION_TITLE = auto()
+    WIN_CONDITION_CONTENT = auto()
 
     # poll message
     POLL_GENERATING_PROCESS = auto()

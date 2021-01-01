@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 
-from discord import Activity, ActivityType
+from discord import Activity, ActivityType, Colour, Embed
 from discord.ext import commands
 from discord.ext.commands import dm_only, guild_only
 
@@ -11,7 +11,7 @@ from undercover.controllers.helpers import clear_game
 
 from .errors import BotPlayerFound
 from .helpers import (
-    MessageStatus,
+    MessageKey,
     generate_mention,
     generate_message,
     retrieve_player_ids,
@@ -32,12 +32,12 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
-        await ctx.send(generate_message(MessageStatus.GUILD_ONLY_COMMAND))
+        await ctx.send(generate_message(MessageKey.GUILD_ONLY_COMMAND))
     elif isinstance(error, commands.errors.PrivateMessageOnly):
-        await ctx.send(generate_message(MessageStatus.DM_ONLY_COMMAND))
+        await ctx.send(generate_message(MessageKey.DM_ONLY_COMMAND))
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
-            await ctx.send(generate_message(MessageStatus.BOT_PLAYER_FOUND))
+            await ctx.send(generate_message(MessageKey.BOT_PLAYER_FOUND))
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
     else:
@@ -122,13 +122,23 @@ async def handle_guess(ctx):
 async def handle_clear(ctx):
     """Clears the game"""
     clear_game(ctx.channel.id)
-    await ctx.send(generate_message(MessageStatus.GAME_CLEARED))
+    await ctx.send(generate_message(MessageKey.GAME_CLEARED))
     await delete_user_word_messages(ctx.channel.id)
 
 
 async def send_how_to_message(ctx):
-    reply = generate_message(MessageStatus.HOW_TO_COMMAND)
-    await ctx.send(reply)
+    embed = Embed(
+        title=generate_message(MessageKey.HOW_TO_TITLE),
+        colour=Colour.blue(),
+        description=generate_message(MessageKey.HOW_TO_CONTENT),
+    )
+    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+    embed.add_field(
+        name=generate_message(MessageKey.WIN_CONDITION_TITLE),
+        value=generate_message(MessageKey.WIN_CONDITION_CONTENT),
+        inline=False,
+    )
+    await ctx.send(embed=embed)
 
 
 async def send_user_word_messages(game_state, channel_id):
