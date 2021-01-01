@@ -9,6 +9,9 @@ messages = yaml.load(messages_file, Loader=yaml.BaseLoader)
 
 
 class MessageKey(Enum):
+    # win message
+    SUMMARY_TITLE = auto()
+
     # how to message
     HOW_TO_TITLE = auto()
     HOW_TO_CONTENT = auto()

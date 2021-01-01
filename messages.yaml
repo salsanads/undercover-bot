@@ -18,7 +18,7 @@ NOT_IN_GUESSING_TURN: "It's not yet the time for guessing"
 CIVILIAN_WIN: "All intruders have been eliminated, **Civilians win**"
 NON_CIVILIAN_WIN: "There's only one Civilian left, **Undercovers and Mr. White win**"
 MR_WHITE_WIN: "There's no difficulty guessing the word, **Mr.White win**"
-SUMMARY: "**Civilians** ({civilian_word}): {civilians}\n**Undercovers** ({undercover_word}): {undercovers}\n**Mr. White**: {mr_whites}"
+SUMMARY_TITLE: "Game Summary"
 
 # how to message
 HOW_TO_TITLE: "How to Play"

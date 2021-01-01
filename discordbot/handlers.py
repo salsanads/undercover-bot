@@ -18,7 +18,7 @@ from .helpers import (
     send_message,
 )
 
-SHOW_PLAYED_WORDS_DURATION = 5  # seconds
+SHOW_PLAYED_WORDS_DURATION = 15  # seconds
 
 
 @bot.event
@@ -170,15 +170,55 @@ async def send_summary_message(ctx, game_state):
                 )
         one_line_mentions = " ".join(mentions)
         game_state.data[players_key] = one_line_mentions
-    content = generate_message(game_state.status, game_state.data)
-    message = await ctx.send(content)
+
+    embed = generate_summary_embed(game_state)
+    message = await ctx.send(embed=embed)
 
     await asyncio.sleep(SHOW_PLAYED_WORDS_DURATION)
 
-    game_state.data["civilian_word"] = "*deleted*"
-    game_state.data["undercover_word"] = "*deleted*"
-    content = generate_message(game_state.status, game_state.data)
-    await message.edit(content=content)
+    del game_state.data["civilian_word"]
+    del game_state.data["undercover_word"]
+    embed = generate_summary_embed(game_state)
+    await message.edit(embed=embed)
+
+
+def generate_summary_embed(game_state):
+    civilian_title = "Civilians"
+    undercover_title = "Undercovers"
+    mr_white_title = "Mr. White"
+
+    if "civilian_word" in game_state.data:
+        civilian_title += " | {word}".format(
+            word=game_state.data["civilian_word"]
+        )
+    if "undercover_word" in game_state.data:
+        undercover_title += " | {word}".format(
+            word=game_state.data["undercover_word"]
+        )
+
+    embed = Embed(
+        title=generate_message(MessageKey.SUMMARY_TITLE.name),
+        colour=Colour.blue(),
+    )
+    if game_state.data["civilians"]:
+        embed.add_field(
+            name=civilian_title,
+            value=game_state.data["civilians"],
+            inline=False,
+        )
+    if game_state.data["undercovers"]:
+        embed.add_field(
+            name=undercover_title,
+            value=game_state.data["undercovers"],
+            inline=False,
+        )
+    if game_state.data["mr_whites"]:
+        embed.add_field(
+            name=mr_white_title,
+            value=game_state.data["mr_whites"],
+            inline=False,
+        )
+    return embed
 
 
 async def delete_user_word_messages(channel_id):
