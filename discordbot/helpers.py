@@ -30,6 +30,9 @@ class MessageStatus(Enum):
     POLL_RESULT_INFO = auto()
     POLL_RESULT_NO_VOTES_SUBMITTED = auto()
 
+    # game clear message
+    GAME_CLEARED = auto()
+
     # common error message
     DM_ONLY_COMMAND = auto()
     GUILD_ONLY_COMMAND = auto()

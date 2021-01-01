@@ -122,7 +122,7 @@ async def handle_guess(ctx):
 async def handle_clear(ctx):
     """Clears the game"""
     clear_game(ctx.channel.id)
-    await ctx.send("The game has been cleared")
+    await ctx.send(generate_message(MessageStatus.GAME_CLEARED))
     await delete_user_word_messages(ctx.channel.id)
 
 
