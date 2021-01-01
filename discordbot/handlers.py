@@ -72,7 +72,6 @@ async def handle_start(ctx):
             await send_message(ctx, game_state)
 
 
-@bot.command(name="eliminated", description=command_desc.get("ELIMINATED"))
 @guild_only()
 async def handle_eliminate(ctx):
     """Eliminates own self."""
@@ -134,7 +133,10 @@ async def send_how_to_message(ctx):
     embed = Embed(
         title=generate_message(MessageKey.HOW_TO_TITLE),
         colour=Colour.blue(),
-        description=generate_message(MessageKey.HOW_TO_CONTENT),
+        description=generate_message(
+            MessageKey.HOW_TO_CONTENT,
+            params={"command_prefix": bot.command_prefix},
+        ),
     )
     embed.set_author(
         name=bot.user.name,

@@ -5,8 +5,6 @@ POLL: "```{command_prefix}poll```
        Holds a poll to vote who will be eliminated in the current turn."
 VOTE: "```{command_prefix}vote [username]```
        Votes the mentioned username to be eliminated in the current ongoing poll."
-ELIMINATED: "```{command_prefix}eliminated```
-             Eliminates own self."
 GUESS: "```{command_prefix}guess [word]```
         Guesses the civillian's word by Mr. White right after being eliminated."
 HELP: "```{command_prefix}help```
