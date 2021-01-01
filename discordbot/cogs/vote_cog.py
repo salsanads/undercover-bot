@@ -96,6 +96,7 @@ class VoteHandler:
 
     @staticmethod
     async def handle_completed_vote(ctx, game_state):
+        await VoteHandler.handle_success_vote(ctx, game_state)
         msg_id = game_state.data["msg_id"]
         poll_msg = await ctx.fetch_message(msg_id)
         await poll_msg.add_reaction("👍")
