@@ -6,7 +6,7 @@ from discord import Colour, Embed
 from discord.ext.commands import Cog, command, guild_only
 
 from discordbot import bot
-from discordbot.helpers import generate_message, send_mention_message
+from discordbot.helpers import send_message
 from undercover import Status, controllers
 
 from .helpers import register_cog
@@ -83,10 +83,9 @@ class PollWorker:
 
     async def handle_invalid_poll(self, game_state, user_id_key="player"):
         if game_state.data is not None and user_id_key in game_state.data:
-            await send_mention_message(self.ctx, game_state, user_id_key)
+            await send_message(self.ctx, game_state, user_id_key)
         else:
-            reply = generate_message(game_state.status.name, game_state.data)
-            await self.ctx.send(reply)
+            await send_message(self.ctx, game_state)
         await self.poll_message.delete()
 
     async def handle_started_poll(self, game_state):
@@ -101,14 +100,13 @@ class PollWorker:
     async def handle_decided_poll(self, game_state):
         result_embed = self.generate_result_embed(game_state, Colour.green())
         await self.ctx.send(embed=result_embed)
-        await send_mention_message(self.ctx, game_state, "player")
+        await send_message(self.ctx, game_state, "player")
         await self.poll_message.delete()
 
     async def handle_failed_poll(self, game_state):
         result_embed = self.generate_result_embed(game_state, Colour.red())
         await self.ctx.send(embed=result_embed)
-        reply = generate_message(game_state.status.name, game_state.data)
-        await self.ctx.send(reply)
+        await send_message(self.ctx, game_state)
         await self.poll_message.delete()
 
     async def poll_timer(self):

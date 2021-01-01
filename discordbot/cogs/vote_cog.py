@@ -8,7 +8,7 @@ from discordbot.helpers import (
     CommandStatus,
     generate_message,
     retrieve_player_ids,
-    send_mention_message,
+    send_message,
 )
 from undercover import Status, controllers
 
@@ -83,10 +83,9 @@ class VoteHandler:
     @staticmethod
     async def handle_invalid_vote(ctx, game_state, user_id_key="player"):
         if game_state.data is not None and user_id_key in game_state.data:
-            await send_mention_message(ctx, game_state, user_id_key)
+            await send_message(ctx, game_state, user_id_key)
         else:
-            reply = generate_message(game_state.status.name, game_state.data)
-            await ctx.send(reply)
+            await send_message(ctx, game_state)
 
     @staticmethod
     async def handle_success_vote(ctx, game_state):

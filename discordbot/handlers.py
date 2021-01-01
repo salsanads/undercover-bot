@@ -15,7 +15,7 @@ from .helpers import (
     generate_mention,
     generate_message,
     retrieve_player_ids,
-    send_mention_message,
+    send_message,
 )
 
 SHOW_PLAYED_WORDS_DURATION = 5  # seconds
@@ -60,15 +60,14 @@ async def handle_start(ctx):
     game_states = controllers.start_game(ctx.channel.id, user_ids)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_USER_FOUND:
-            await send_mention_message(ctx, game_state, "playing_users")
+            await send_message(ctx, game_state, "playing_users")
         elif game_state.status == Status.PLAYED_WORD:
             await send_user_word_messages(game_state, ctx.channel.id)
         elif game_state.status == Status.PLAYING_ORDER:
             await send_how_to_message(ctx)
-            await send_mention_message(ctx, game_state, "playing_order")
+            await send_message(ctx, game_state, "playing_order")
         else:
-            reply = generate_message(game_state.status.name, game_state.data)
-            await ctx.send(reply)
+            await send_message(ctx, game_state)
 
 
 @bot.command(name="eliminated")
@@ -79,7 +78,7 @@ async def handle_eliminate(ctx):
     user = bot.get_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
-            await send_mention_message(ctx, game_state, "playing_order")
+            await send_message(ctx, game_state, "playing_order")
         elif (
             game_state.status == Status.PLAYER_NOT_FOUND
             or game_state.status == Status.PLAYER_ALREADY_KILLED
@@ -87,7 +86,7 @@ async def handle_eliminate(ctx):
             or game_state.status == Status.UNDERCOVER_ELIMINATED
             or game_state.status == Status.MR_WHITE_ELIMINATED
         ):
-            await send_mention_message(ctx, game_state, "player")
+            await send_message(ctx, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:
             reply = generate_message(game_state.status.name, game_state.data)
             await user.send(reply)
@@ -95,8 +94,7 @@ async def handle_eliminate(ctx):
             await send_summary_message(ctx, game_state)
             await delete_user_word_messages(ctx.channel.id)
         else:
-            reply = generate_message(game_state.status.name, game_state.data)
-            await ctx.send(reply)
+            await send_message(ctx, game_state)
 
 
 @bot.command(name="guess")
@@ -109,10 +107,9 @@ async def handle_guess(ctx):
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             channel = bot.get_channel(game_state.room_id)
-            await send_mention_message(channel, game_state, "playing_order")
+            await send_message(channel, game_state, "playing_order")
         elif game_state.status == Status.NOT_IN_GUESSING_TURN:
-            reply = generate_message(game_state.status.name, game_state.data)
-            await ctx.send(reply)
+            await send_message(ctx, game_state)
         elif game_state.status == Status.SUMMARY:
             await send_summary_message(ctx, game_state)
             await delete_user_word_messages(ctx.channel.id)

@@ -54,12 +54,12 @@ def retrieve_player_ids(ctx, include_author=True):
     return list(user_ids)
 
 
-async def send_mention_message(recipient, game_state, user_id_key):
-    if type(game_state.data[user_id_key]) == list:
+async def send_message(recipient, game_state, user_id_key=None):
+    if user_id_key is not None and type(game_state.data[user_id_key]) == list:
         game_state.data[user_id_key] = generate_mention(
             user_ids=game_state.data[user_id_key]
         )
-    else:
+    elif user_id_key is not None:
         game_state.data[user_id_key] = generate_mention(
             user_id=game_state.data[user_id_key]
         )
