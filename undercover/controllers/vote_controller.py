@@ -10,7 +10,7 @@ voted_valid = player_valid
 
 def voter_valid(func):
     @player_valid
-    def check_voter_valid(voter_id):
+    def check_voter_valid(room_id, voter_id):
         vote = Vote.get(voter_id)
         if vote is not None:
             data = {"player": voter_id}
@@ -18,7 +18,7 @@ def voter_valid(func):
 
     @wraps(func)
     def wrapper(room_id, voted_id, voter_id, *args, **kwargs):
-        game_states = check_voter_valid(voter_id)
+        game_states = check_voter_valid(room_id, voter_id)
         if game_states is not None:
             return game_states
         return func(room_id, voted_id, voter_id, *args, **kwargs)
