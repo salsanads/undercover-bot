@@ -5,151 +5,148 @@ from functools import wraps
 from discord import Colour, Embed
 from discord.ext.commands import Cog, command, guild_only
 
+from discordbot import bot
 from discordbot.helpers import generate_message, send_mention_message
 from undercover import Status, controllers
 
 from .helpers import register_cog
 
-POLLING_DURATION_IN_SECONDS = 30
-EMBED_COLOR = Colour.blue()
+
+@register_cog
+class Poll(Cog):
+    @Cog.listener()
+    async def on_ready(self):
+        print("Poll cog ready")
+
+    @command(name="poll")
+    @guild_only()
+    async def handle_poll(self, ctx):
+        poll_worker = PollWorker(ctx)
+        await poll_worker.start_poll()
+        await poll_worker.complete_poll()
 
 
 def poll_started(func):
     @wraps(func)
-    def wrapper(poll, *args, **kwargs):
-        if poll.started:
-            return func(poll, *args, **kwargs)
+    def wrapper(poll_worker, *args, **kwargs):
+        if poll_worker.started_poll:
+            return func(poll_worker, *args, **kwargs)
+        return asyncio.sleep(0)  # hack to return awaitable
 
     return wrapper
 
 
-class PollService:
-    def __init__(self, cog, ctx):
-        self.ctx = ctx
-        self.bot = cog.bot
-        self.embed_color = EMBED_COLOR
-        self.duration = POLLING_DURATION_IN_SECONDS
-        self.game_state = None
-        self.instruction_msg = None
-        self.status_msg = None
-        self.timer_msg = None
-        self.started = False
-        self.alive_player_ids = list()
+class PollWorker:
+    POLL_DURATION = 30  # seconds
 
-    async def start(self):
-        await self.initiate_poll_messages()
-        self.game_state = self.get_game_state()
-        handle_start = self.get_handler()
-        await handle_start()
+    def __init__(self, ctx):
+        self.ctx = ctx
+        self.poll_message = None
+        self.started_poll = False
+
+    @staticmethod
+    def get_handler(game_state):
+        handlers = {
+            Status.ONGOING_GAME_NOT_FOUND.name: PollWorker.handle_invalid_poll,
+            Status.ONGOING_POLL_FOUND.name: PollWorker.handle_invalid_poll,
+            Status.PLAYER_NOT_FOUND.name: PollWorker.handle_invalid_poll,
+            Status.PLAYER_ALREADY_KILLED.name: PollWorker.handle_invalid_poll,
+            Status.POLL_STARTED.name: PollWorker.handle_started_poll,
+            Status.NO_VOTES_SUBMITTED.name: PollWorker.handle_failed_poll,
+            Status.NOT_ENOUGH_VOTES.name: PollWorker.handle_failed_poll,
+            Status.MULTIPLE_PLAYERS_VOTED.name: PollWorker.handle_failed_poll,
+            Status.POLL_DECIDED.name: PollWorker.handle_decided_poll,
+        }
+        return handlers.get(game_state.status.name)
+
+    async def start_poll(self):
+        await self.initiate_poll_message()
+        game_states = controllers.start_poll(
+            self.ctx.channel.id,
+            self.ctx.author.id,
+            self.poll_message.status.id,
+        )
+        handler = self.get_handler(game_states[0])
+        await handler(self, game_states[0])
 
     @poll_started
-    async def complete(self):
-        self.game_state = self.get_completed_state()
-        handle_completed = self.get_handler()
-        await handle_completed()
+    async def complete_poll(self):
+        game_states = controllers.complete_poll(self.ctx.channel.id)
+        handler = self.get_handler(game_states[0])
+        await handler(self, game_states[0])
 
-    def get_game_state(self):
-        game_states = controllers.start_poll(
-            self.ctx.channel.id, self.ctx.author.id, self.status_msg.id
+    async def initiate_poll_message(self):
+        instruction = await self.ctx.send("Generating new poll...")
+        timer = await self.ctx.send("\u200b")
+        status = await self.ctx.send("\u200b")
+        self.poll_message = PollMessage(instruction, timer, status)
+
+    async def handle_invalid_poll(self, game_state, user_id_key="player"):
+        if game_state.data is not None and user_id_key in game_state.data:
+            await send_mention_message(self.ctx, game_state, user_id_key)
+        else:
+            reply = generate_message(game_state.status.name, game_state.data)
+            await self.ctx.send(reply)
+        await self.poll_message.delete()
+
+    async def handle_started_poll(self, game_state):
+        self.started_poll = True
+        embed = self.generate_instruction_embed(game_state.data["players"])
+        await self.poll_message.instruction.edit(content="", embed=embed)
+        await self.poll_message.status.edit(content="No votes submitted yet")
+        await asyncio.wait(
+            [self.poll_timer()], return_when=asyncio.FIRST_COMPLETED
         )
-        for game_state in game_states:
-            return game_state
 
-    def get_completed_state(self):
-        game_states = controllers.complete_poll(
-            self.ctx.channel.id, self.alive_player_ids
-        )
-        for game_state in game_states:
-            return game_state
+    async def handle_decided_poll(self, game_state):
+        result_embed = self.generate_result_embed(game_state, Colour.green())
+        await self.ctx.send(embed=result_embed)
+        await send_mention_message(self.ctx, game_state, "player")
+        await self.poll_message.delete()
 
-    def get_handler(self):
-        handlers = {
-            Status.ONGOING_GAME_NOT_FOUND.name: self.handle_reply_to_channel,
-            Status.ONGOING_POLL_FOUND.name: self.handle_reply_to_channel,
-            Status.PLAYER_NOT_FOUND.name: self.handle_mention_players,
-            Status.PLAYER_ALREADY_KILLED.name: self.handle_mention_players,
-            Status.POLL_STARTED.name: self.handle_start_poll,
-            Status.NO_VOTES_SUBMITTED.name: self.handle_failed_poll,
-            Status.NOT_ENOUGH_VOTES.name: self.handle_failed_poll,
-            Status.MULTIPLE_PLAYERS_VOTED.name: self.handle_failed_poll,
-            Status.POLL_DECIDED.name: self.handle_poll_decided,
-        }
-        return handlers.get(self.game_state.status.name, self.default_handler)
-
-    def default_handler(self):
-        raise KeyError("No handler found")
-
-    async def handle_mention_players(self, user_id_key="player"):
-        await send_mention_message(self.ctx, self.game_state, user_id_key)
-        await self.delete_poll_messages()
-
-    async def handle_reply_to_channel(self):
-        reply = generate_message(
-            self.game_state.status.name, self.game_state.data
-        )
+    async def handle_failed_poll(self, game_state):
+        result_embed = self.generate_result_embed(game_state, Colour.red())
+        await self.ctx.send(embed=result_embed)
+        reply = generate_message(game_state.status.name, game_state.data)
         await self.ctx.send(reply)
-        await self.delete_poll_messages()
-
-    async def handle_start_poll(self):
-        self.started = True
-        self.alive_player_ids = self.game_state.data["players"]
-        polling_tasks = self.generate_polling_tasks()
-        embed = self.generate_instruction_embed()
-        await self.instruction_msg.edit(content="", embed=embed)
-        await self.status_msg.edit(content="No votes submitted yet")
-        await asyncio.wait(polling_tasks, return_when=asyncio.FIRST_COMPLETED)
-
-    async def handle_poll_decided(self):
-        result_embed = self.generate_result_embed()
-        await self.ctx.send(embed=result_embed)
-        await self.handle_mention_players()
-
-    async def handle_failed_poll(self):
-        result_embed = self.generate_result_embed()
-        await self.handle_reply_to_channel()
-        await self.ctx.send(embed=result_embed)
+        await self.poll_message.delete()
 
     async def poll_timer(self):
-        second = self.duration
+        second = self.POLL_DURATION
         while second > 0:
-            await self.timer_msg.edit(
+            await self.poll_message.timer.edit(
                 content=f"Time remaining **{second}** seconds"
             )
             await asyncio.sleep(1)
             second -= 1
 
-    async def initiate_poll_messages(self):
-        self.instruction_msg = await self.ctx.send("Generating new poll...")
-        self.timer_msg = await self.ctx.send("\u200b")
-        self.status_msg = await self.ctx.send("\u200b")
+    @staticmethod
+    def generate_instruction_embed(user_ids):
+        commands = "\n".join(
+            [
+                f"• `{bot.command_prefix}vote` <@{user_id}>"
+                for user_id in user_ids
+            ]
+        )
+        instruction = f"In the next **{PollWorker.POLL_DURATION} seconds**,\n\
+                        Vote **one player** by running one of these commands below!\n\n\
+                        **YOU CAN ONLY VOTE ONCE**\n\
+                        \n\
+                        {commands}"
+        return Embed(
+            title="[POLL] Instruction",
+            description=instruction,
+            colour=Colour.blue(),
+            timestamp=datetime.utcnow(),
+        )
 
-    async def delete_poll_messages(self):
-        await self.instruction_msg.delete()
-        await self.timer_msg.delete()
-        await self.status_msg.delete()
-
-    def generate_polling_tasks(self):
-        reaction_listener = self.generate_reaction_listener()
-        return [
-            self.bot.wait_for("reaction_add", check=reaction_listener),
-            self.poll_timer(),
-        ]
-
-    def generate_reaction_listener(self):
-        def listener(reaction, user):
-            return (
-                user.id == self.status_msg.author.id
-                and reaction.message.id == self.status_msg.id
-            )
-
-        return listener
-
-    def generate_result_embed(self):
-        if self.game_state.status == Status.NO_VOTES_SUBMITTED:
+    @staticmethod
+    def generate_result_embed(game_state, embed_color):
+        if game_state.status == Status.NO_VOTES_SUBMITTED:
             description = "No votes submitted"
         else:
-            tally = self.game_state.data["tally"]
-            total_alive_players = len(self.alive_player_ids)
+            tally = game_state.data["tally"]
+            total_alive_players = len(game_state.data["players"])
             description = "\n".join(
                 [
                     f"<@{user}> is voted by **{votes}** people"
@@ -162,41 +159,18 @@ class PollService:
         return Embed(
             title="[POLL] Results",
             description=description,
-            colour=self.embed_color,
-            timestamp=datetime.utcnow(),
-        )
-
-    def generate_instruction_embed(self):
-        user_ids = self.alive_player_ids
-        prefix = self.bot.command_prefix
-        commands = "\n".join(
-            [f"• `{prefix}vote` <@{user_id}>" for user_id in user_ids]
-        )
-        instruction = f"In the next **{self.duration} seconds**,\n\
-                        Vote **one player** by running one of these commands below!\n\n\
-                        **YOU CAN ONLY VOTE ONCE**\n\
-                        \n\
-                        {commands}"
-        return Embed(
-            title="[POLL] Instruction",
-            description=instruction,
-            colour=self.embed_color,
+            colour=embed_color,
             timestamp=datetime.utcnow(),
         )
 
 
-@register_cog
-class Poll(Cog):
-    def __init__(self, bot):
-        self.bot = bot
+class PollMessage:
+    def __init__(self, instruction, timer, status):
+        self.instruction = instruction
+        self.timer = timer
+        self.status = status
 
-    @Cog.listener()
-    async def on_ready(self):
-        print("Poll cog ready")
-
-    @command(name="poll")
-    @guild_only()
-    async def handle_poll(self, ctx):
-        poll = PollService(self, ctx)
-        await poll.start()
-        await poll.complete()
+    async def delete(self):
+        await self.instruction.delete()
+        await self.timer.delete()
+        await self.status.delete()
