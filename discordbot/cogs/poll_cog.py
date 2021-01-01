@@ -6,7 +6,12 @@ from discord import Colour, Embed
 from discord.ext.commands import Cog, command, guild_only
 
 from discordbot import bot
-from discordbot.helpers import MessageKey, generate_message, send_message
+from discordbot.helpers import (
+    MessageKey,
+    command_desc,
+    generate_message,
+    send_message,
+)
 from undercover import Status, controllers
 
 from .helpers import register_cog
@@ -16,11 +21,12 @@ from .helpers import register_cog
 class Poll(Cog):
     @Cog.listener()
     async def on_ready(self):
-        print("Poll cog ready")
+        print(f"{type(self).__name__} cog ready")
 
-    @command(name="poll")
+    @command(name="poll", description=command_desc.get("POLL"))
     @guild_only()
     async def handle_poll(self, ctx):
+        """Holds a poll to vote who will be eliminated in the current turn."""
         poll_worker = PollWorker(ctx)
         await poll_worker.start_poll()
         await poll_worker.complete_poll()

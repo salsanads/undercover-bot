@@ -6,6 +6,7 @@ from discord.ext.commands import Cog, command, errors, guild_only
 from discordbot.errors import EmptyVoteFound, MultipleVotesFound
 from discordbot.helpers import (
     MessageKey,
+    command_desc,
     generate_message,
     retrieve_player_ids,
     send_message,
@@ -19,7 +20,7 @@ from .helpers import register_cog
 class Vote(Cog):
     @Cog.listener()
     async def on_ready(self):
-        print("Vote cog ready")
+        print(f"{type(self).__name__} cog ready")
 
     @Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -31,9 +32,10 @@ class Vote(Cog):
             if isinstance(error.original, EmptyVoteFound):
                 await ctx.send(generate_message(MessageKey.EMPTY_VOTE_FOUND))
 
-    @command(name="vote")
+    @command(name="vote", description=command_desc.get("VOTE"))
     @guild_only()
     async def handle_vote(self, ctx):
+        """Votes the mentioned username to be eliminated in the current ongoing poll."""
         await VoteHandler.handle_vote(ctx)
 
 

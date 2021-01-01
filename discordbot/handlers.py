@@ -12,8 +12,10 @@ from undercover.controllers.helpers import clear_game
 from .errors import BotPlayerFound
 from .helpers import (
     MessageKey,
+    command_desc,
     generate_mention,
     generate_message,
+    metadata,
     retrieve_player_ids,
     send_message,
 )
@@ -25,7 +27,9 @@ SHOW_PLAYED_WORDS_DURATION = 15  # seconds
 async def on_ready():
     print(f"{bot.user.name} has connected to Discord!")
     await bot.change_presence(
-        activity=Activity(type=ActivityType.listening, name="!help")
+        activity=Activity(
+            type=ActivityType.listening, name=f"{bot.command_prefix}help"
+        )
     )
 
 
@@ -44,16 +48,16 @@ async def on_command_error(ctx, error):
         traceback.print_exception(type(error), error, error.__traceback__)
 
 
-@bot.command(name="howto")
+@bot.command(name="howto", description=command_desc.get("HOWTO"))
 async def handle_how_to(ctx):
-    """Shows game guide"""
+    """Displays how to play the game guide."""
     await send_how_to_message(ctx)
 
 
-@bot.command(name="start")
+@bot.command(name="start", description=command_desc.get("START"))
 @guild_only()
 async def handle_start(ctx):
-    """Starts the game"""
+    """Plays the game with all of the mentioned usernames."""
     user_ids = retrieve_player_ids(ctx)
     game_states = controllers.start_game(ctx.channel.id, user_ids)
     for game_state in game_states:
@@ -68,10 +72,10 @@ async def handle_start(ctx):
             await send_message(ctx, game_state)
 
 
-@bot.command(name="eliminated")
+@bot.command(name="eliminated", description=command_desc.get("ELIMINATED"))
 @guild_only()
 async def handle_eliminate(ctx):
-    """Eliminates own self"""
+    """Eliminates own self."""
     game_states = controllers.eliminate_player(ctx.channel.id, ctx.author.id)
     user = bot.get_user(ctx.author.id)
     for game_state in game_states:
@@ -95,10 +99,10 @@ async def handle_eliminate(ctx):
             await send_message(ctx, game_state)
 
 
-@bot.command(name="guess")
+@bot.command(name="guess", description=command_desc.get("GUESS"))
 @dm_only()
 async def handle_guess(ctx):
-    """Guesses Civilian's word"""
+    """Guesses the civillian's word by Mr. White right after being eliminated."""
     user_id = ctx.message.author.id
     word = " ".join(ctx.message.content.split(" ")[1:])
     game_states = controllers.guess_word(user_id, word)
@@ -117,10 +121,10 @@ async def handle_guess(ctx):
             await channel.send(reply)
 
 
-@bot.command(name="clear")
+@bot.command(name="clear", description=command_desc.get("CLEAR"))
 @guild_only()
 async def handle_clear(ctx):
-    """Clears the game"""
+    """Clears any ongoing game in the current channel."""
     clear_game(ctx.channel.id)
     await ctx.send(generate_message(MessageKey.GAME_CLEARED))
     await delete_user_word_messages(ctx.channel.id)
@@ -132,7 +136,11 @@ async def send_how_to_message(ctx):
         colour=Colour.blue(),
         description=generate_message(MessageKey.HOW_TO_CONTENT),
     )
-    embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+    embed.set_author(
+        name=bot.user.name,
+        icon_url=bot.user.avatar_url,
+        url=metadata.get("BOT_URL"),
+    )
     embed.add_field(
         name=generate_message(MessageKey.WIN_CONDITION_TITLE),
         value=generate_message(MessageKey.WIN_CONDITION_CONTENT),

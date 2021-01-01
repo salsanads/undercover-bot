@@ -1,0 +1,17 @@
+---
+START: "```{command_prefix}start [username 1] [username 2] ... [username n]```
+        Plays the game with all of the mentioned usernames."
+POLL: "```{command_prefix}poll```
+       Holds a poll to vote who will be eliminated in the current turn."
+VOTE: "```{command_prefix}vote [username]```
+       Votes the mentioned username to be eliminated in the current ongoing poll."
+ELIMINATED: "```{command_prefix}eliminated```
+             Eliminates own self."
+GUESS: "```{command_prefix}guess [word]```
+        Guesses the civillian's word by Mr. White right after being eliminated."
+HELP: "```{command_prefix}help```
+       Displays list of available commands."
+HOWTO: "```{command_prefix}howto```
+        Displays how to play the game guide."
+CLEAR: "```{command_prefix}clear```
+        Clears any ongoing game in the current channel."
