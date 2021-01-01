@@ -11,7 +11,7 @@ from undercover.controllers.helpers import clear_game
 
 from .errors import BotPlayerFound
 from .helpers import (
-    CommandStatus,
+    MessageStatus,
     generate_mention,
     generate_message,
     retrieve_player_ids,
@@ -32,14 +32,12 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.NoPrivateMessage):
-        await ctx.send(generate_message(CommandStatus.GUILD_ONLY_COMMAND.name))
+        await ctx.send(generate_message(MessageStatus.GUILD_ONLY_COMMAND))
     elif isinstance(error, commands.errors.PrivateMessageOnly):
-        await ctx.send(generate_message(CommandStatus.DM_ONLY_COMMAND.name))
+        await ctx.send(generate_message(MessageStatus.DM_ONLY_COMMAND))
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
-            await ctx.send(
-                generate_message(CommandStatus.BOT_PLAYER_FOUND.name)
-            )
+            await ctx.send(generate_message(MessageStatus.BOT_PLAYER_FOUND))
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
     else:
@@ -88,7 +86,7 @@ async def handle_eliminate(ctx):
         ):
             await send_message(ctx, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:
-            reply = generate_message(game_state.status.name, game_state.data)
+            reply = generate_message(game_state.status, game_state.data)
             await user.send(reply)
         elif game_state.status == Status.SUMMARY:
             await send_summary_message(ctx, game_state)
@@ -115,7 +113,7 @@ async def handle_guess(ctx):
             await delete_user_word_messages(ctx.channel.id)
         else:
             channel = bot.get_channel(game_state.room_id)
-            reply = generate_message(game_state.status.name, game_state.data)
+            reply = generate_message(game_state.status, game_state.data)
             await channel.send(reply)
 
 
@@ -129,7 +127,7 @@ async def handle_clear(ctx):
 
 
 async def send_how_to_message(ctx):
-    reply = generate_message(CommandStatus.HOW_TO_COMMAND.name)
+    reply = generate_message(MessageStatus.HOW_TO_COMMAND)
     await ctx.send(reply)
 
 
@@ -138,7 +136,7 @@ async def send_user_word_messages(game_state, channel_id):
     word_messages = []
     for user_id in user_words:
         user = bot.get_user(user_id)
-        content = generate_message(game_state.status.name, user_words[user_id])
+        content = generate_message(game_state.status, user_words[user_id])
         message = await user.send(content)
         word_messages.append(
             models.WordMessage(message.id, user.id, channel_id)
@@ -162,14 +160,14 @@ async def send_summary_message(ctx, game_state):
                 )
         one_line_mentions = " ".join(mentions)
         game_state.data[players_key] = one_line_mentions
-    content = generate_message(game_state.status.name, game_state.data)
+    content = generate_message(game_state.status, game_state.data)
     message = await ctx.send(content)
 
     await asyncio.sleep(SHOW_PLAYED_WORDS_DURATION)
 
     game_state.data["civilian_word"] = "*deleted*"
     game_state.data["undercover_word"] = "*deleted*"
-    content = generate_message(game_state.status.name, game_state.data)
+    content = generate_message(game_state.status, game_state.data)
     await message.edit(content=content)
 
 

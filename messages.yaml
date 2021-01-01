@@ -24,6 +24,9 @@ SUMMARY: "**Civilians** ({civilian_word}): {civilians}\n**Undercovers** ({underc
 HOW_TO_COMMAND: "```How to Play\n0. Check your DM\n1. Remember and don't share your word to other players\n2. Mr. White won't get any word\n3. All players won't know others' role\n4. Describe your word by following the order\n5. Each player must describe their words\n6. Choose someone to be eliminated\n7. The chosen one must type !eliminated to eliminate himself\n8. Repeat step 1-7 each turn\n9. The game will end if meets one of the conditions below\n\nWin Conditions\n0. Mr. White guess the Civilian's word correctly (Mr. White win)\n1. Undercovers and Mr. White are eliminated (Civilians win)\n2. There is only one civilian left (Undercovers and Mr. White Win)```"
 
 # poll message
+POLL_GENERATING_PROCESS: "Generating new poll..."
+POLL_TIMER: "Time remaining **{second}** seconds"
+POLL_STARTED: "No votes submitted yet"
 POLL_DECIDED: "Poll decided, {player} will be eliminated"
 ONGOING_POLL_FOUND: "There's an ongoing poll in this channel, wait it to finish first"
 ONGOING_POLL_NOT_FOUND: "There's no ongoing poll in this channel"
@@ -33,6 +36,22 @@ NO_VOTES_SUBMITTED: "No votes submitted, none will be eliminated"
 NOT_ENOUGH_VOTES: "No more than half players voted, none will be eliminated"
 MULTIPLE_PLAYERS_VOTED: "Multiple players voted, none will be eliminated"
 VOTE_EXISTS: "{player} has voted before, you can only vote once"
+# poll instruction
+POLL_INSTRUCTION_TITLE: "Poll Instruction"
+POLL_INSTRUCTION_CONTENT: "In the next **{poll_duration} seconds**,\n
+                           Vote **one player** by running one of these commands below!\n
+                           \n
+                           **YOU CAN ONLY VOTE ONCE**\n
+                           \n
+                           {commands}"
+# poll status
+POLL_STATUS_TITLE: "Poll Status"
+POLL_STATUS_VOTED_PLAYER_INFO: "<@{user}> is voted by **{votes}** people"
+# poll result
+POLL_RESULT_TITLE: "Poll Result"
+POLL_RESULT_VOTED_PLAYER_INFO: "<@{user}> is voted by **{votes}** people"
+POLL_RESULT_INFO: "Total alive players: **{total_alive_players}**"
+POLL_RESULT_NO_VOTES_SUBMITTED: "No votes submitted"
 
 # common error message
 GUILD_ONLY_COMMAND: "You must run this command in a server"

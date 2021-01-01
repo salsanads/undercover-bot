@@ -6,7 +6,7 @@ from discord import Colour, Embed
 from discord.ext.commands import Cog, command, guild_only
 
 from discordbot import bot
-from discordbot.helpers import send_message
+from discordbot.helpers import MessageStatus, generate_message, send_message
 from undercover import Status, controllers
 
 from .helpers import register_cog
@@ -76,7 +76,9 @@ class PollWorker:
         await handler(self, game_states[0])
 
     async def initiate_poll_message(self):
-        instruction = await self.ctx.send("Generating new poll...")
+        instruction = await self.ctx.send(
+            generate_message(MessageStatus.POLL_GENERATING_PROCESS)
+        )
         timer = await self.ctx.send("\u200b")
         status = await self.ctx.send("\u200b")
         self.poll_message = PollMessage(instruction, timer, status)
@@ -92,7 +94,9 @@ class PollWorker:
         self.started_poll = True
         embed = self.generate_instruction_embed(game_state.data["players"])
         await self.poll_message.instruction.edit(content="", embed=embed)
-        await self.poll_message.status.edit(content="No votes submitted yet")
+        await self.poll_message.status.edit(
+            content=generate_message(MessageStatus.POLL_STARTED)
+        )
         await asyncio.wait(
             [self.poll_timer()], return_when=asyncio.FIRST_COMPLETED
         )
@@ -111,9 +115,10 @@ class PollWorker:
 
     async def poll_timer(self):
         second = self.POLL_DURATION
+        poll_timer_message = generate_message(MessageStatus.POLL_TIMER)
         while second > 0:
             await self.poll_message.timer.edit(
-                content=f"Time remaining **{second}** seconds"
+                content=poll_timer_message.format(second=second)
             )
             await asyncio.sleep(1)
             second -= 1
@@ -126,14 +131,12 @@ class PollWorker:
                 for user_id in user_ids
             ]
         )
-        instruction = f"In the next **{PollWorker.POLL_DURATION} seconds**,\n\
-                        Vote **one player** by running one of these commands below!\n\n\
-                        **YOU CAN ONLY VOTE ONCE**\n\
-                        \n\
-                        {commands}"
+        instruction = generate_message(MessageStatus.POLL_INSTRUCTION_CONTENT)
         return Embed(
-            title="[POLL] Instruction",
-            description=instruction,
+            title=generate_message(MessageStatus.POLL_INSTRUCTION_TITLE),
+            description=instruction.format(
+                poll_duration=PollWorker.POLL_DURATION, commands=commands
+            ),
             colour=Colour.blue(),
             timestamp=datetime.utcnow(),
         )
@@ -141,21 +144,27 @@ class PollWorker:
     @staticmethod
     def generate_result_embed(game_state, embed_color):
         if game_state.status == Status.NO_VOTES_SUBMITTED:
-            description = "No votes submitted"
+            description = generate_message(
+                MessageStatus.POLL_RESULT_NO_VOTES_SUBMITTED
+            )
         else:
             tally = game_state.data["tally"]
+            voted_player_info = generate_message(
+                MessageStatus.POLL_RESULT_VOTED_PLAYER_INFO
+            )
             total_alive_players = len(game_state.data["players"])
             description = "\n".join(
                 [
-                    f"<@{user}> is voted by **{votes}** people"
+                    voted_player_info.format(user=user, votes=votes)
                     for user, votes in tally.items()
                 ]
             )
-            description += (
-                f"\n\nTotal alive players: **{total_alive_players}**"
+            result_info = generate_message(MessageStatus.POLL_RESULT_INFO)
+            description += "\n\n" + result_info.format(
+                total_alive_players=total_alive_players
             )
         return Embed(
-            title="[POLL] Results",
+            title=generate_message(MessageStatus.POLL_RESULT_TITLE),
             description=description,
             colour=embed_color,
             timestamp=datetime.utcnow(),

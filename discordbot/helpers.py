@@ -8,16 +8,32 @@ messages_file = open("messages.yaml", "r")
 messages = yaml.load(messages_file, Loader=yaml.BaseLoader)
 
 
-class CommandStatus(Enum):
-    DM_ONLY_COMMAND = auto()
-    GUILD_ONLY_COMMAND = auto()
-
+class MessageStatus(Enum):
+    # how to message
     HOW_TO_COMMAND = auto()
 
-    BOT_PLAYER_FOUND = auto()
-
+    # poll message
+    POLL_GENERATING_PROCESS = auto()
+    POLL_TIMER = auto()
+    POLL_STARTED = auto()
     EMPTY_VOTE_FOUND = auto()
     MULTIPLE_VOTES_FOUND = auto()
+    # poll instruction
+    POLL_INSTRUCTION_TITLE = auto()
+    POLL_INSTRUCTION_CONTENT = auto()
+    # poll status
+    POLL_STATUS_TITLE = auto()
+    POLL_STATUS_VOTED_PLAYER_INFO = auto()
+    # poll result
+    POLL_RESULT_TITLE = auto()
+    POLL_RESULT_VOTED_PLAYER_INFO = auto()
+    POLL_RESULT_INFO = auto()
+    POLL_RESULT_NO_VOTES_SUBMITTED = auto()
+
+    # common error message
+    DM_ONLY_COMMAND = auto()
+    GUILD_ONLY_COMMAND = auto()
+    BOT_PLAYER_FOUND = auto()
 
 
 def generate_mention(user_id=None, user_ids=None, style="{mention}"):
@@ -38,6 +54,8 @@ def generate_mention(user_id=None, user_ids=None, style="{mention}"):
 
 
 def generate_message(key, params=None):
+    if isinstance(key, Enum):
+        key = key.name
     message = messages[key]
     if params is not None:
         message = message.format(**params)
@@ -64,5 +82,5 @@ async def send_message(recipient, game_state, user_id_key=None):
         game_state.data[user_id_key] = generate_mention(
             user_id=game_state.data[user_id_key]
         )
-    message = generate_message(game_state.status.name, game_state.data)
+    message = generate_message(game_state.status, game_state.data)
     return await recipient.send(message)
