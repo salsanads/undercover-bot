@@ -1,10 +1,11 @@
-import json
 from enum import Enum, auto
+
+import yaml
 
 from .errors import BotPlayerFound
 
-messages_file = open("messages.json", "r")
-messages = json.load(messages_file)
+messages_file = open("messages.yaml", "r")
+messages = yaml.load(messages_file, Loader=yaml.BaseLoader)
 
 
 class CommandStatus(Enum):
