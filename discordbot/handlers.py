@@ -101,7 +101,7 @@ async def handle_eliminate(ctx):
 @bot.command(name="guess", description=command_desc.get("GUESS"))
 @dm_only()
 async def handle_guess(ctx):
-    """Guesses the civillian's word by Mr. White right after being eliminated."""
+    """Guesses the civilian's word by Mr. White right after being eliminated."""
     user_id = ctx.message.author.id
     word = " ".join(ctx.message.content.split(" ")[1:])
     game_states = controllers.guess_word(user_id, word)

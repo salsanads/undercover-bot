@@ -6,7 +6,7 @@ POLL: "```{command_prefix}poll```
 VOTE: "```{command_prefix}vote [username]```
        Votes the mentioned username to be eliminated in the current ongoing poll."
 GUESS: "```{command_prefix}guess [word]```
-        Guesses the civillian's word by Mr. White right after being eliminated."
+        Guesses the civilian's word by Mr. White right after being eliminated."
 HELP: "```{command_prefix}help```
        Displays list of available commands."
 HOWTO: "```{command_prefix}howto```
