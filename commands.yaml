@@ -1,9 +1,9 @@
 ---
-START: "```{command_prefix}start [username 1] [username 2] ... [username n]```
+START: "```{command_prefix}start [@username_1] [@username_2] ... [@username_n]```
         Plays the game with all of the mentioned usernames."
 POLL: "```{command_prefix}poll```
        Holds a poll to vote who will be eliminated in the current turn."
-VOTE: "```{command_prefix}vote [username]```
+VOTE: "```{command_prefix}vote [@username]```
        Votes the mentioned username to be eliminated in the current ongoing poll."
 GUESS: "```{command_prefix}guess [word]```
         Guesses the civilian's word by Mr. White right after being eliminated."

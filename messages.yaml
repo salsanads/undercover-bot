@@ -3,7 +3,7 @@
 PLAYED_WORD: "Hi, your word is **{word}**"
 PLAYING_ORDER: "Start to describe the word by order {playing_order}"
 INVALID_PLAYER_NUMBER: "The number of players should be {min_player} up to {max_player}"
-PLAYING_USER_FOUND: "{playing_users} currently playing the game on other channel"
+PLAYING_USER_FOUND: "{playing_users} currently playing the game in other channel"
 
 # eliminate message
 CIVILIAN_ELIMINATED: "{player} with role Civilian has been eliminated"
@@ -22,7 +22,7 @@ SUMMARY_TITLE: "Game Summary"
 
 # how to message
 HOW_TO_TITLE: "How to Play"
-HOW_TO_CONTENT: "0. Start the game by `{command_prefix}start [username 1] [username 2] ... [username n]`\n1. Check your DM and don't share your word to other players\n2. Mr. White won't get any word\n3. All players won't know others' role\n4. Describe your word by following the order\n5. Each player must describe their words\n6. Hold a poll using `{command_prefix}poll` to decide someone to be eliminated\n7. Vote someone to be eliminated using `{command_prefix}vote [username]`\n8. Repeat step 1-7 each turn\n9. The game will end if meets one of the conditions below"
+HOW_TO_CONTENT: "0. Start with `{command_prefix}start [@username_1] [@username_2] ... [@username_n]`\n1. Check your DM and don't share your word to other players\n2. Mr. White won't get any word\n3. All players won't know others' role\n4. Describe your word by following the order\n5. Each player must describe their words\n6. Hold a poll using `{command_prefix}poll` to decide someone to be eliminated\n7. Vote someone to be eliminated using `{command_prefix}vote [@username]`\n8. Repeat step 4-7 each turn\n9. The game will end if meets one of the conditions below"
 WIN_CONDITION_TITLE: "Win Conditions"
 WIN_CONDITION_CONTENT: "0. Mr. White guess the Civilian's word correctly (Mr. White win)\n1. Undercovers and Mr. White are eliminated (Civilians win)\n2. There is only one civilian left (Undercovers and Mr. White Win)"
 
@@ -57,13 +57,13 @@ POLL_RESULT_INFO: "Total alive players: **{total_alive_players}**"
 POLL_RESULT_NO_VOTES_SUBMITTED: "No votes submitted"
 
 # game clear message
-GAME_CLEARED: "The game has been cleared in this channel"
+GAME_CLEARED: "The game in this channel has been cleared"
 
 # common error message
-GUILD_ONLY_COMMAND: "You must run this command in a server"
-DM_ONLY_COMMAND: "You can only run this command from private message"
+GUILD_ONLY_COMMAND: "You can only run this command in a server"
+DM_ONLY_COMMAND: "You can only run this command in a direct message"
 BOT_PLAYER_FOUND: "Sorry, bots are not allowed to join the game"
-ONGOING_GAME_FOUND: "There's an ongoing game in this server, finish it first"
-ONGOING_GAME_NOT_FOUND: "There's no ongoing game in this server"
+ONGOING_GAME_FOUND: "There's an ongoing game in this channel, finish it first"
+ONGOING_GAME_NOT_FOUND: "There's no ongoing game in this channel"
 PLAYER_NOT_FOUND: "{player} is not playing in this channel"
 PLAYER_ALREADY_KILLED: "{player} has been eliminated before"

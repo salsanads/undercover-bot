@@ -62,18 +62,11 @@ class Help(Cog):
                 comm.description.format(command_prefix=bot.command_prefix)
             )
 
-        embed.add_field(
-            name="\u200b", value="\n\n".join(common_commands), inline=False,
-        )
-        embed.add_field(name="\u200b", value="\u200b", inline=False)
-        embed.add_field(
-            name="Channel Only",
-            value="\n\n".join(guild_only_commands),
-            inline=False,
-        )
-        embed.add_field(name="\u200b", value="\u200b", inline=False)
-        embed.add_field(
-            name="DM Only", value="\n\n".join(dm_only_commands), inline=False,
-        )
+        description = "\n".join(common_commands)
+        description += "\n\n**Channel Only**\n"
+        description += "\n".join(guild_only_commands)
+        description += "\n\n**DM Only**\n"
+        description += "\n".join(dm_only_commands)
+        embed.description = description
 
         await ctx.send(embed=embed)
