@@ -86,7 +86,7 @@ class PollWorker:
 
     async def handle_invalid_poll(self, game_state, user_id_key="player"):
         if game_state.data is not None and user_id_key in game_state.data:
-            await self.poll.edit(
+            await self.poll_message.edit(
                 content=generate_message_from_game_state(
                     game_state, user_id_key
                 )
