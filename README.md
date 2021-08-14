@@ -8,12 +8,12 @@ A Discord bot inspired from the [Undercover ^^](https://www.producthunt.com/post
 ## Development Guide
 1. Create a virtual environment
 ```
-python -m venv venv
+python -m venv undercover-bot-venv
 ```
 
 2. Activate the virtual environment
 ```
-source venv/bin/activate
+source undercover-bot-venv/bin/activate
 ```
 
 3. Install the dependencies
