@@ -29,7 +29,7 @@ WIN_CONDITION_CONTENT: "0. Mr. White guess the Civilian's word correctly (Mr. Wh
 
 # poll message
 POLL_GENERATING_PROCESS: "Generating new poll..."
-POLL_STARTED: "No votes submitted yet"
+POLL_STARTED: "Vote one player to be eliminated by following the instruction below:"
 POLL_TIMER: "Time remaining **{second}** seconds"
 POLL_COMPLETED: "Timer stopped, all players already voted"
 POLL_DECIDED: "Poll decided, waiting {player} to be eliminated..."

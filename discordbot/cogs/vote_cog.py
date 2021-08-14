@@ -87,7 +87,7 @@ class VoteHandler:
     async def handle_success_vote(ctx, game_state):
         poll_msg = await ctx.fetch_message(game_state.data["msg_id"])
         status_embed = VoteHandler.generate_status_embed(game_state)
-        await poll_msg.edit(content="", embed=status_embed)
+        await poll_msg.edit(embed=status_embed)
 
     @staticmethod
     def generate_status_embed(game_state):
