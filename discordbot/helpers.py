@@ -29,8 +29,9 @@ class MessageKey(Enum):
 
     # poll message
     POLL_GENERATING_PROCESS = auto()
-    POLL_TIMER = auto()
     POLL_STARTED = auto()
+    POLL_TIMER = auto()
+    POLL_COMPLETED = auto()
     EMPTY_VOTE_FOUND = auto()
     MULTIPLE_VOTES_FOUND = auto()
     # poll instruction
