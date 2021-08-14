@@ -37,7 +37,7 @@ class Poll(Cog):
 def poll_started(func):
     @wraps(func)
     def wrapper(poll_worker, *args, **kwargs):
-        if poll_worker.started_poll:
+        if poll_worker.poll_started:
             return func(poll_worker, *args, **kwargs)
         return asyncio.sleep(0)  # hack to return awaitable
 
@@ -50,7 +50,7 @@ class PollWorker:
     def __init__(self, ctx):
         self.ctx = ctx
         self.poll_message = None
-        self.started_poll = False
+        self.poll_started = False
 
     @staticmethod
     def get_handler(game_state):
@@ -96,7 +96,7 @@ class PollWorker:
             )
 
     async def handle_started_poll(self, game_state):
-        self.started_poll = True
+        self.poll_started = True
         await self.poll_message.edit(
             content=generate_message(MessageKey.POLL_STARTED)
         )
@@ -126,11 +126,25 @@ class PollWorker:
             timer_message_content.format(second=second)
         )
         while second > 0:
-            await asyncio.sleep(1)
-            second -= 1
-            await timer_message.edit(
-                content=timer_message_content.format(second=second)
+            # hack to check total votes reached while the timer on
+            # TODO improve to not check every seconds (e.g. get notification when the last vote given)
+            game_states = controllers.vote_controller.decide_vote_states(
+                self.ctx.channel.id
             )
+            if game_states[0].status == Status.TOTAL_VOTES_REACHED:
+                await timer_message.edit(
+                    content="{timer}\n{completed}".format(
+                        timer=timer_message_content.format(second=second),
+                        completed=generate_message(MessageKey.POLL_COMPLETED),
+                    )
+                )
+                second = 0
+            else:
+                await asyncio.sleep(1)
+                second -= 1
+                await timer_message.edit(
+                    content=timer_message_content.format(second=second)
+                )
 
     @staticmethod
     def generate_instruction_embed(user_ids):
