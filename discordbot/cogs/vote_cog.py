@@ -7,6 +7,7 @@ from discordbot.errors import EmptyVoteFound, MultipleVotesFound
 from discordbot.helpers import (
     MessageKey,
     command_desc,
+    generate_mention,
     generate_message,
     retrieve_player_ids,
     send_message,
@@ -91,6 +92,7 @@ class VoteHandler:
     @staticmethod
     def generate_status_embed(game_state):
         tally = game_state.data["tally"]
+        voters = game_state.data["voters"]
         voted_player_info = generate_message(
             MessageKey.POLL_STATUS_VOTED_PLAYER_INFO
         )
@@ -99,7 +101,9 @@ class VoteHandler:
             description="\n".join(
                 [
                     voted_player_info.format(
-                        user_id=user_id, vote_count=vote_count
+                        user_id=user_id,
+                        vote_count=vote_count,
+                        voters=generate_mention(user_ids=voters[user_id]),
                     )
                     for user_id, vote_count in tally.items()
                 ]

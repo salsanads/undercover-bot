@@ -10,6 +10,7 @@ from discordbot.handlers import handle_eliminate
 from discordbot.helpers import (
     MessageKey,
     command_desc,
+    generate_mention,
     generate_message,
     generate_message_from_game_state,
     send_message,
@@ -171,6 +172,7 @@ class PollWorker:
             )
         else:
             tally = game_state.data["tally"]
+            voters = game_state.data["voters"]
             voted_player_info = generate_message(
                 MessageKey.POLL_RESULT_VOTED_PLAYER_INFO
             )
@@ -178,7 +180,9 @@ class PollWorker:
             description = "\n".join(
                 [
                     voted_player_info.format(
-                        user_id=user_id, vote_count=vote_count
+                        user_id=user_id,
+                        vote_count=vote_count,
+                        voters=generate_mention(user_ids=voters[user_id]),
                     )
                     for user_id, vote_count in tally.items()
                 ]

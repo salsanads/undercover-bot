@@ -21,8 +21,8 @@ def start_poll(room_id, user_id, msg_id):  # user_id used inside decorator
 
 
 def complete_poll(room_id):
-    tally, total_votes = count_vote(room_id)
-    data = {"tally": tally}
+    tally, total_votes, voters = count_vote(room_id)
+    data = {"tally": tally, "voters": voters}
     if total_votes == 0:
         terminate_poll(room_id)
         return [GameState(Status.NO_VOTES_SUBMITTED, data)]

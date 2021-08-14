@@ -36,10 +36,10 @@ def vote_player(room_id, voted_id, voter_id):
 
 
 def decide_vote_states(room_id):
-    tally, total_votes = count_vote(room_id)
+    tally, total_votes, voters = count_vote(room_id)
     num_alive_players = Player.num_alive_players(room_id)
     poll = Poll.get(room_id)
-    data = {"msg_id": poll.msg_id, "tally": tally}
+    data = {"msg_id": poll.msg_id, "tally": tally, "voters": voters}
     if total_votes == num_alive_players:
         return [GameState(Status.TOTAL_VOTES_REACHED, data)]
     return [GameState(Status.VOTE_SUCCESS, data)]

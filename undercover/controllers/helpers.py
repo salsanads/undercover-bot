@@ -42,9 +42,14 @@ def ongoing_poll_found(should_be_found):
 def count_vote(room_id):
     votes = Vote.find_all(room_id=room_id)
     tally = Counter()
+    voters = {}
     for vote in votes:
         tally[vote.voted_id] += 1
-    return tally, len(votes)
+        if vote.voter_id not in voters:
+            voters[vote.voted_id] = [vote.voter_id]
+        else:
+            voters[vote.voted_id].append(vote.voter_id)
+    return tally, len(votes), voters
 
 
 def player_valid(func):
