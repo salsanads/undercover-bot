@@ -9,7 +9,7 @@ from discordbot import bot
 from undercover import Status, controllers, models
 from undercover.controllers.helpers import clear_game
 
-from .errors import BotPlayerFound
+from .errors import BotPlayerFound, EmptyVoteFound, MultipleVotesFound
 from .helpers import (
     MessageKey,
     command_desc,
@@ -42,6 +42,10 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.errors.CommandInvokeError):
         if isinstance(error.original, BotPlayerFound):
             await ctx.send(generate_message(MessageKey.BOT_PLAYER_FOUND))
+        elif isinstance(error.original, EmptyVoteFound) or isinstance(
+            error.original, MultipleVotesFound
+        ):
+            pass  # already handled inside vote_cog.py
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
     else:
