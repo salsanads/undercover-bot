@@ -114,9 +114,9 @@ class PollWorker:
 
     async def handle_failed_poll(self, game_state):
         result_embed = self.generate_result_embed(game_state, Colour.red())
-        await self.ctx.send(embed=result_embed)
-        await self.poll_message.edit(
-            content=generate_message_from_game_state(game_state)
+        await self.ctx.send(
+            content=generate_message_from_game_state(game_state),
+            embed=result_embed,
         )
 
     async def timer(self):
