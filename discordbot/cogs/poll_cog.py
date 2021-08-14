@@ -14,6 +14,7 @@ from discordbot.helpers import (
     generate_message_from_game_state,
     send_message,
 )
+from discordbot.views import PollItem, PollView
 from undercover import Status, controllers
 
 from .helpers import register_cog
@@ -97,12 +98,16 @@ class PollWorker:
 
     async def handle_started_poll(self, game_state):
         self.poll_started = True
+
+        poll_items = []
+        for user_id in game_state.data["players"]:
+            user = await bot.fetch_user(user_id)
+            poll_items.append(PollItem(user_id, user.display_name))
         await self.poll_message.edit(
-            content=generate_message(MessageKey.POLL_STARTED)
+            content=generate_message(MessageKey.POLL_STARTED),
+            view=PollView(poll_items),
         )
-        await self.ctx.send(
-            embed=self.generate_instruction_embed(game_state.data["players"])
-        )
+
         await asyncio.wait([self.timer()], return_when=asyncio.FIRST_COMPLETED)
 
     async def handle_decided_poll(self, game_state):
@@ -144,23 +149,6 @@ class PollWorker:
                 await timer_message.edit(
                     content=timer_message_content.format(second=second)
                 )
-
-    @staticmethod
-    def generate_instruction_embed(user_ids):
-        commands = "\n".join(
-            [
-                f"• `{bot.command_prefix}vote` <@{user_id}>"
-                for user_id in user_ids
-            ]
-        )
-        instruction = generate_message(MessageKey.POLL_INSTRUCTION_CONTENT)
-        return Embed(
-            title=generate_message(MessageKey.POLL_INSTRUCTION_TITLE),
-            description=instruction.format(
-                poll_duration=PollWorker.POLL_DURATION, commands=commands
-            ),
-            colour=Colour.blue(),
-        )
 
     @staticmethod
     def generate_result_embed(game_state, embed_color):
