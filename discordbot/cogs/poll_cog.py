@@ -101,8 +101,7 @@ class PollWorker:
             content=generate_message(MessageKey.POLL_STARTED)
         )
         await self.ctx.send(
-            content="",
-            embed=self.generate_instruction_embed(game_state.data["players"]),
+            embed=self.generate_instruction_embed(game_state.data["players"])
         )
         await asyncio.wait([self.timer()], return_when=asyncio.FIRST_COMPLETED)
 
@@ -178,8 +177,10 @@ class PollWorker:
             total_alive_players = len(game_state.data["players"])
             description = "\n".join(
                 [
-                    voted_player_info.format(user=user, votes=votes)
-                    for user, votes in tally.items()
+                    voted_player_info.format(
+                        user_id=user_id, vote_count=vote_count
+                    )
+                    for user_id, vote_count in tally.items()
                 ]
             )
             result_info = generate_message(MessageKey.POLL_RESULT_INFO)

@@ -51,10 +51,10 @@ POLL_INSTRUCTION_CONTENT: "In the next **{poll_duration} seconds**,\n
                            {commands}"
 # poll status
 POLL_STATUS_TITLE: "Poll Status"
-POLL_STATUS_VOTED_PLAYER_INFO: "<@{user}> is voted by **{votes}** people"
+POLL_STATUS_VOTED_PLAYER_INFO: "<@{user_id}> is voted by **{vote_count}** people"
 # poll result
 POLL_RESULT_TITLE: "Poll Result"
-POLL_RESULT_VOTED_PLAYER_INFO: "<@{user}> is voted by **{votes}** people"
+POLL_RESULT_VOTED_PLAYER_INFO: "<@{user_id}> is voted by **{vote_count}** people"
 POLL_RESULT_INFO: "Total alive players: **{total_alive_players}**"
 POLL_RESULT_NO_VOTES_SUBMITTED: "No votes submitted"
 

@@ -42,29 +42,12 @@ class Vote(Cog):
 class VoteHandler:
     @staticmethod
     async def handle_vote(ctx):
-        game_state = VoteHandler.decide_game_state(ctx)
-        handler = VoteHandler.get_handler(game_state)
-        await handler(ctx, game_state)
-
-    @staticmethod
-    def get_handler(game_state):
-        handlers = {
-            Status.ONGOING_POLL_NOT_FOUND.name: VoteHandler.handle_invalid_vote,
-            Status.PLAYER_NOT_FOUND.name: VoteHandler.handle_invalid_vote,
-            Status.PLAYER_ALREADY_KILLED.name: VoteHandler.handle_invalid_vote,
-            Status.VOTE_EXISTS.name: VoteHandler.handle_invalid_vote,
-            Status.VOTE_SUCCESS.name: VoteHandler.handle_success_vote,
-            Status.TOTAL_VOTES_REACHED.name: VoteHandler.handle_completed_vote,
-        }
-        return handlers.get(game_state.status.name)
-
-    @staticmethod
-    def decide_game_state(ctx):
         voted_user_id = VoteHandler.get_voted_user_id(ctx)
         game_states = controllers.vote_player(
             ctx.channel.id, voted_user_id, ctx.author.id
         )
-        return game_states[0]
+        handler = VoteHandler.get_handler(game_states[0])
+        await handler(ctx, game_states[0])
 
     @staticmethod
     def get_voted_user_id(ctx):
@@ -81,6 +64,18 @@ class VoteHandler:
         return True
 
     @staticmethod
+    def get_handler(game_state):
+        handlers = {
+            Status.ONGOING_POLL_NOT_FOUND.name: VoteHandler.handle_invalid_vote,
+            Status.PLAYER_NOT_FOUND.name: VoteHandler.handle_invalid_vote,
+            Status.PLAYER_ALREADY_KILLED.name: VoteHandler.handle_invalid_vote,
+            Status.VOTE_EXISTS.name: VoteHandler.handle_invalid_vote,
+            Status.VOTE_SUCCESS.name: VoteHandler.handle_success_vote,
+            Status.TOTAL_VOTES_REACHED.name: VoteHandler.handle_success_vote,
+        }
+        return handlers.get(game_state.status.name)
+
+    @staticmethod
     async def handle_invalid_vote(ctx, game_state, user_id_key="player"):
         if game_state.data is not None and user_id_key in game_state.data:
             await send_message(ctx, game_state, user_id_key)
@@ -89,14 +84,9 @@ class VoteHandler:
 
     @staticmethod
     async def handle_success_vote(ctx, game_state):
-        msg_id = game_state.data["msg_id"]
+        poll_msg = await ctx.fetch_message(game_state.data["msg_id"])
         status_embed = VoteHandler.generate_status_embed(game_state)
-        poll_msg = await ctx.fetch_message(msg_id)
         await poll_msg.edit(content="", embed=status_embed)
-
-    @staticmethod
-    async def handle_completed_vote(ctx, game_state):
-        await VoteHandler.handle_success_vote(ctx, game_state)
 
     @staticmethod
     def generate_status_embed(game_state):
@@ -108,8 +98,10 @@ class VoteHandler:
             title=generate_message(MessageKey.POLL_STATUS_TITLE),
             description="\n".join(
                 [
-                    voted_player_info.format(user=user, votes=votes)
-                    for user, votes in tally.items()
+                    voted_player_info.format(
+                        user_id=user_id, vote_count=vote_count
+                    )
+                    for user_id, vote_count in tally.items()
                 ]
             ),
             colour=Colour.blue(),
