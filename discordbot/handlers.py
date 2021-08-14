@@ -81,7 +81,7 @@ async def handle_start(ctx):
 async def handle_eliminate(ctx):
     """Eliminates own self."""
     game_states = controllers.eliminate_player(ctx.channel.id, ctx.author.id)
-    user = bot.get_user(ctx.author.id)
+    user = await bot.fetch_user(ctx.author.id)
     for game_state in game_states:
         if game_state.status == Status.PLAYING_ORDER:
             await send_message(ctx, game_state, "playing_order")
@@ -160,7 +160,7 @@ async def send_user_word_messages(game_state, channel_id):
     user_words = game_state.data
     word_messages = []
     for user_id in user_words:
-        user = bot.get_user(user_id)
+        user = await bot.fetch_user(user_id)
         content = generate_message(game_state.status, user_words[user_id])
         message = await user.send(content)
         word_messages.append(
@@ -239,7 +239,7 @@ def generate_summary_embed(game_state):
 async def delete_user_word_messages(channel_id):
     word_messages = models.WordMessage.get_all(channel_id)
     for word_message in word_messages:
-        user = bot.get_user(word_message.user_id)
+        user = await bot.fetch_user(word_message.user_id)
         message = await user.fetch_message(word_message.message_id)
         await message.delete()
     models.WordMessage.delete_all(channel_id)
