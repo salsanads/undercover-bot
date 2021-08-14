@@ -19,7 +19,7 @@ class Help(Cog):
         embed = Embed(title="Commands", color=Colour.blue())
         embed.set_author(
             name=bot.user.name,
-            icon_url=bot.user.avatar_url,
+            icon_url=bot.user.avatar.url,
             url=metadata.get("BOT_URL"),
         )
 

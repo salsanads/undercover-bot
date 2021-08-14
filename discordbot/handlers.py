@@ -123,7 +123,7 @@ async def send_how_to_message(ctx):
     )
     embed.set_author(
         name=bot.user.name,
-        icon_url=bot.user.avatar_url,
+        icon_url=bot.user.avatar.url,
         url=metadata.get("BOT_URL"),
     )
     embed.add_field(
