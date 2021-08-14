@@ -11,6 +11,7 @@ from discordbot.helpers import (
     MessageKey,
     command_desc,
     generate_message,
+    generate_message_from_game_state,
     send_message,
 )
 from undercover import Status, controllers
@@ -67,11 +68,11 @@ class PollWorker:
         return handlers.get(game_state.status.name)
 
     async def start_poll(self):
-        await self.initiate_poll_message()
+        self.poll_message = await self.ctx.send(
+            generate_message(MessageKey.POLL_GENERATING_PROCESS)
+        )
         game_states = controllers.start_poll(
-            self.ctx.channel.id,
-            self.ctx.author.id,
-            self.poll_message.status.id,
+            self.ctx.channel.id, self.ctx.author.id, self.poll_message.id,
         )
         handler = self.get_handler(game_states[0])
         await handler(self, game_states[0])
@@ -82,54 +83,54 @@ class PollWorker:
         handler = self.get_handler(game_states[0])
         await handler(self, game_states[0])
 
-    async def initiate_poll_message(self):
-        instruction = await self.ctx.send(
-            generate_message(MessageKey.POLL_GENERATING_PROCESS)
-        )
-        timer = await self.ctx.send("\u200b")
-        status = await self.ctx.send("\u200b")
-        self.poll_message = PollMessage(instruction, timer, status)
-
     async def handle_invalid_poll(self, game_state, user_id_key="player"):
         if game_state.data is not None and user_id_key in game_state.data:
-            await send_message(self.ctx, game_state, user_id_key)
+            await self.poll.edit(
+                content=generate_message_from_game_state(
+                    game_state, user_id_key
+                )
+            )
         else:
-            await send_message(self.ctx, game_state)
-        await self.poll_message.delete()
+            await self.poll_message.edit(
+                content=generate_message_from_game_state(game_state)
+            )
 
     async def handle_started_poll(self, game_state):
         self.started_poll = True
-        embed = self.generate_instruction_embed(game_state.data["players"])
-        await self.poll_message.instruction.edit(content="", embed=embed)
-        await self.poll_message.status.edit(
+        await self.poll_message.edit(
             content=generate_message(MessageKey.POLL_STARTED)
         )
-        await asyncio.wait(
-            [self.poll_timer()], return_when=asyncio.FIRST_COMPLETED
+        await self.ctx.send(
+            content="",
+            embed=self.generate_instruction_embed(game_state.data["players"]),
         )
+        await asyncio.wait([self.timer()], return_when=asyncio.FIRST_COMPLETED)
 
     async def handle_decided_poll(self, game_state):
         result_embed = self.generate_result_embed(game_state, Colour.green())
         await self.ctx.send(embed=result_embed)
         await send_message(self.ctx, game_state, "player")
-        await self.poll_message.delete()
         await handle_eliminate(self.ctx)
 
     async def handle_failed_poll(self, game_state):
         result_embed = self.generate_result_embed(game_state, Colour.red())
         await self.ctx.send(embed=result_embed)
-        await send_message(self.ctx, game_state)
-        await self.poll_message.delete()
+        await self.poll_message.edit(
+            content=generate_message_from_game_state(game_state)
+        )
 
-    async def poll_timer(self):
+    async def timer(self):
         second = self.POLL_DURATION
-        poll_timer_message = generate_message(MessageKey.POLL_TIMER)
+        timer_message_content = generate_message(MessageKey.POLL_TIMER)
+        timer_message = await self.ctx.send(
+            timer_message_content.format(second=second)
+        )
         while second > 0:
-            await self.poll_message.timer.edit(
-                content=poll_timer_message.format(second=second)
-            )
             await asyncio.sleep(1)
             second -= 1
+            await timer_message.edit(
+                content=timer_message_content.format(second=second)
+            )
 
     @staticmethod
     def generate_instruction_embed(user_ids):
@@ -177,15 +178,3 @@ class PollWorker:
             colour=embed_color,
             timestamp=datetime.utcnow(),
         )
-
-
-class PollMessage:
-    def __init__(self, instruction, timer, status):
-        self.instruction = instruction
-        self.timer = timer
-        self.status = status
-
-    async def delete(self):
-        await self.instruction.delete()
-        await self.timer.delete()
-        await self.status.delete()
