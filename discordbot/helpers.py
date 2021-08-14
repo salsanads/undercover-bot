@@ -80,6 +80,18 @@ def generate_message(key, params=None):
     return message
 
 
+def generate_message_from_game_state(game_state, user_id_key=None):
+    if user_id_key is not None and type(game_state.data[user_id_key]) == list:
+        game_state.data[user_id_key] = generate_mention(
+            user_ids=game_state.data[user_id_key]
+        )
+    elif user_id_key is not None:
+        game_state.data[user_id_key] = generate_mention(
+            user_id=game_state.data[user_id_key]
+        )
+    return generate_message(game_state.status, game_state.data)
+
+
 def retrieve_player_ids(ctx, include_author=True):
     user_ids = set()
     if include_author:
@@ -92,13 +104,5 @@ def retrieve_player_ids(ctx, include_author=True):
 
 
 async def send_message(recipient, game_state, user_id_key=None):
-    if user_id_key is not None and type(game_state.data[user_id_key]) == list:
-        game_state.data[user_id_key] = generate_mention(
-            user_ids=game_state.data[user_id_key]
-        )
-    elif user_id_key is not None:
-        game_state.data[user_id_key] = generate_mention(
-            user_id=game_state.data[user_id_key]
-        )
-    message = generate_message(game_state.status, game_state.data)
+    message = generate_message_from_game_state(game_state, user_id_key)
     return await recipient.send(message)
