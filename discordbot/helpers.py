@@ -15,6 +15,9 @@ metadata = yaml.load(metadata_file, Loader=yaml.BaseLoader)
 
 
 class MessageKey(Enum):
+    # start message
+    GAME_STARTED_INSTRUCTION = auto()
+
     # win message
     SUMMARY_TITLE = auto()
 
@@ -42,7 +45,7 @@ class MessageKey(Enum):
     POLL_RESULT_INFO = auto()
     POLL_RESULT_NO_VOTES_SUBMITTED = auto()
 
-    # game clear message
+    # clear game message
     GAME_CLEARED = auto()
 
     # common error message

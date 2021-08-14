@@ -14,7 +14,8 @@ def main():
     undercover.main(database_url, env)
 
     bot_token = os.getenv("BOT_TOKEN")
-    discordbot.main(bot_token)
+    bot_command_prefix = os.getenv("BOT_COMMAND_PREFIX")
+    discordbot.main(bot_token, bot_command_prefix)
 
 
 if __name__ == "__main__":

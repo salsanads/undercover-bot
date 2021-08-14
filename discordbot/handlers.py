@@ -66,8 +66,13 @@ async def handle_start(ctx):
         elif game_state.status == Status.PLAYED_WORD:
             await send_user_word_messages(game_state, ctx.channel.id)
         elif game_state.status == Status.PLAYING_ORDER:
-            await send_how_to_message(ctx)
             await send_message(ctx, game_state, "playing_order")
+            await ctx.send(
+                generate_message(
+                    MessageKey.GAME_STARTED_INSTRUCTION,
+                    params={"command_prefix": bot.command_prefix},
+                )
+            )
         else:
             await send_message(ctx, game_state)
 
