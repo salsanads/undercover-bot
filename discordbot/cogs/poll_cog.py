@@ -6,7 +6,7 @@ from discord import Colour, Embed
 from discord.ext.commands import Cog, command, guild_only
 
 from discordbot import bot
-from discordbot.handlers import handle_eliminate
+from discordbot.handlers import eliminate
 from discordbot.helpers import (
     MessageKey,
     command_desc,
@@ -110,7 +110,7 @@ class PollWorker:
         result_embed = self.generate_result_embed(game_state, Colour.green())
         await self.ctx.send(embed=result_embed)
         await send_message(self.ctx, game_state, "player")
-        await handle_eliminate(self.ctx)
+        await eliminate(self.ctx.channel, game_state.data["player"])
 
     async def handle_failed_poll(self, game_state):
         result_embed = self.generate_result_embed(game_state, Colour.red())

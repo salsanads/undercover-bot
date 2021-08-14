@@ -82,15 +82,16 @@ def generate_message(key, params=None):
 
 
 def generate_message_from_game_state(game_state, user_id_key=None):
+    message_params = {}
     if user_id_key is not None and type(game_state.data[user_id_key]) == list:
-        game_state.data[user_id_key] = generate_mention(
+        message_params[user_id_key] = generate_mention(
             user_ids=game_state.data[user_id_key]
         )
     elif user_id_key is not None:
-        game_state.data[user_id_key] = generate_mention(
+        message_params[user_id_key] = generate_mention(
             user_id=game_state.data[user_id_key]
         )
-    return generate_message(game_state.status, game_state.data)
+    return generate_message(game_state.status, message_params)
 
 
 def retrieve_player_ids(ctx, include_author=True):

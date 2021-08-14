@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 
-from discord import Activity, ActivityType, Colour, Embed
+from discord import Activity, ActivityType, Colour, Embed, TextChannel
 from discord.ext import commands
 from discord.ext.commands import dm_only, guild_only
 
@@ -81,32 +81,6 @@ async def handle_start(ctx):
             await send_message(ctx, game_state)
 
 
-@guild_only()
-async def handle_eliminate(ctx):
-    """Eliminates own self."""
-    game_states = controllers.eliminate_player(ctx.channel.id, ctx.author.id)
-    user = await bot.fetch_user(ctx.author.id)
-    for game_state in game_states:
-        if game_state.status == Status.PLAYING_ORDER:
-            await send_message(ctx, game_state, "playing_order")
-        elif (
-            game_state.status == Status.PLAYER_NOT_FOUND
-            or game_state.status == Status.PLAYER_ALREADY_KILLED
-            or game_state.status == Status.CIVILIAN_ELIMINATED
-            or game_state.status == Status.UNDERCOVER_ELIMINATED
-            or game_state.status == Status.MR_WHITE_ELIMINATED
-        ):
-            await send_message(ctx, game_state, "player")
-        elif game_state.status == Status.ASK_GUESSED_WORD:
-            reply = generate_message(game_state.status, game_state.data)
-            await user.send(reply)
-        elif game_state.status == Status.SUMMARY:
-            await send_summary_message(ctx, game_state)
-            await delete_user_word_messages(ctx.channel.id)
-        else:
-            await send_message(ctx, game_state)
-
-
 @bot.command(name="guess", description=command_desc.get("GUESS"))
 @dm_only()
 async def handle_guess(ctx):
@@ -171,6 +145,30 @@ async def send_user_word_messages(game_state, channel_id):
             models.WordMessage(message.id, user.id, channel_id)
         )
     models.WordMessage.insert_all(word_messages)
+
+
+async def eliminate(channel: TextChannel, eliminated_user_id: int):
+    game_states = controllers.eliminate_player(channel.id, eliminated_user_id)
+    user = await bot.fetch_user(eliminated_user_id)
+    for game_state in game_states:
+        if game_state.status == Status.PLAYING_ORDER:
+            await send_message(channel, game_state, "playing_order")
+        elif (
+            game_state.status == Status.PLAYER_NOT_FOUND
+            or game_state.status == Status.PLAYER_ALREADY_KILLED
+            or game_state.status == Status.CIVILIAN_ELIMINATED
+            or game_state.status == Status.UNDERCOVER_ELIMINATED
+            or game_state.status == Status.MR_WHITE_ELIMINATED
+        ):
+            await send_message(channel, game_state, "player")
+        elif game_state.status == Status.ASK_GUESSED_WORD:
+            reply = generate_message(game_state.status, game_state.data)
+            await user.send(reply)
+        elif game_state.status == Status.SUMMARY:
+            await send_summary_message(channel, game_state)
+            await delete_user_word_messages(channel.id)
+        else:
+            await send_message(channel, game_state)
 
 
 async def send_summary_message(ctx, game_state):
