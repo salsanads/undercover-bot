@@ -162,6 +162,7 @@ async def eliminate(channel: TextChannel, eliminated_user_id: int):
         ):
             await send_message(channel, game_state, "player")
         elif game_state.status == Status.ASK_GUESSED_WORD:
+            game_state.data["command_prefix"] = bot.command_prefix
             reply = generate_message(game_state.status, game_state.data)
             await user.send(reply)
         elif game_state.status == Status.SUMMARY:

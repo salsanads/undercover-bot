@@ -12,7 +12,7 @@ UNDERCOVER_ELIMINATED: "{player} with role Undercover has been eliminated"
 MR_WHITE_ELIMINATED: "{player} with role Mr. White has been eliminated, waiting for Mr. White to guess..."
 
 # guess message
-ASK_GUESSED_WORD: "Hi Mr. White, please guess the word using `!guess` command"
+ASK_GUESSED_WORD: "Hi Mr. White, please guess the word using `{command_prefix}guess` command"
 NOT_IN_GUESSING_TURN: "It's not yet the time for guessing"
 
 # win message
