@@ -45,7 +45,7 @@ def count_vote(room_id):
     voters = {}
     for vote in votes:
         tally[vote.voted_id] += 1
-        if vote.voter_id not in voters:
+        if vote.voted_id not in voters:
             voters[vote.voted_id] = [vote.voter_id]
         else:
             voters[vote.voted_id].append(vote.voter_id)
