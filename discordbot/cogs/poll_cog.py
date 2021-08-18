@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 from functools import wraps
 
 from discord import Colour, Embed
@@ -161,7 +160,6 @@ class PollWorker:
                 poll_duration=PollWorker.POLL_DURATION, commands=commands
             ),
             colour=Colour.blue(),
-            timestamp=datetime.utcnow(),
         )
 
     @staticmethod
@@ -195,5 +193,4 @@ class PollWorker:
             title=generate_message(MessageKey.POLL_RESULT_TITLE),
             description=description,
             colour=embed_color,
-            timestamp=datetime.utcnow(),
         )

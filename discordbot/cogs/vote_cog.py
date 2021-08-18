@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from discord import Colour, Embed
 from discord.ext.commands import Cog, command, errors, guild_only
 
@@ -109,5 +107,4 @@ class VoteHandler:
                 ]
             ),
             colour=Colour.blue(),
-            timestamp=datetime.utcnow(),
         )
